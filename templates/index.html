@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Title</title>
+    <title>Bar charts with Bokeh!</title>
+    <link
+            href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.css"
+            rel="stylesheet" type="text/css">
+    <link
+            href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.css"
+            rel="stylesheet" type="text/css">
+    <link
+            href="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.css"
+            rel="stylesheet" type="text/css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
-
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.js"></script>
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.js"></script>
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.js"></script>
 </head>
-<body ng-app="app" ng-controller="controller">
+<body>
 
-{% raw %}
+<select>
+    {% for field in fields %}
+        <option value={{ field }}>{{ field }}</option>
+    {% endfor %}
+</select>
 
-Message: {{ hello }}
+<form method=post enctype=multipart/form-data>
+    <input type=file name=file>
+    <input type=submit value=Upload>
+</form>
 
-{% endraw %}
-
-
-<script src="{{ url_for('static', filename='controller.js') }}"></script>
+{{ div|safe }}
+{{ script|safe }}
 
 </body>
 </html>
