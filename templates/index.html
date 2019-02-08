@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Title</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body ng-app="app" ng-controller="controller">
+
+{% raw %}
+
+Message: {{ hello }}
+
+{% endraw %}
+
+
+<script src="{{ url_for('static', filename='controller.js') }}"></script>
+
+</body>
+</html>
