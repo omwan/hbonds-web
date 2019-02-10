@@ -33,13 +33,17 @@ def get_file():
 def chart():
     fields = count_hbonds.MOE_HEADERS
 
+    div = ""
+    script = ""
+
     if request.method == "POST":
+        if request.form.get("filter-out") is None:
+            filter_out = False
+        else:
+            filter_out = True
         folder, file = get_file()
-        output_file = count_hbonds.build_output(folder, file)
+        output_file = count_hbonds.build_output(folder, file, filter_out)
         plot = count_hbonds.build_graph(output_file)
         script, div = components(plot)
-    else:
-        div = ""
-        script = ""
 
     return render_template("index.html", div=div, script=script, fields=fields)

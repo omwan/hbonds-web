@@ -18,16 +18,17 @@
 </head>
 <body>
 
-<select>
-    {% for field in fields %}
-        <option value={{ field }}>{{ field }}</option>
-    {% endfor %}
-</select>
+{#<select>#}
+{#    {% for field in fields %}#}
+{#        <option value={{ field }}>{{ field }}</option>#}
+{#    {% endfor %}#}
+{#</select>#}
 
 <form method=post enctype=multipart/form-data>
-    <input type=file name=file>
+    <input type=file name=file><br />
+    <input type="checkbox" name="filter-out" id="filter-out">
+    <label for="filter-out">Filter out?</label>
     <input type=submit value=Upload>
-    <input type="checkbox" >
 </form>
 
 {{ div|safe }}
