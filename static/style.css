@@ -1,0 +1,17 @@
+body {
+    font-family: open sans, serif;
+    font-size: 15px;
+}
+
+/*#graphs .col-md-6 {*/
+/*padding:20px;*/
+/*box-sizing: border-box;*/
+/*}*/
+
+#upload-form input {
+    background: none !important;
+    color: inherit;
+    border: none;
+    padding: 0 !important;
+    font: inherit;
+}

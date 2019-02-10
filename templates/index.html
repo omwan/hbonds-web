@@ -15,24 +15,28 @@
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
 
-{#<select>#}
-{#    {% for field in fields %}#}
-{#        <option value={{ field }}>{{ field }}</option>#}
-{#    {% endfor %}#}
-{#</select>#}
-
 <form method=post enctype=multipart/form-data>
-    <input type=file name=file><br />
+    <input type=file name=file>
+
     <input type="checkbox" name="filter-out" id="filter-out">
-    <label for="filter-out">Filter out?</label>
+    <label for="filter-out">
+        Filter out?
+    </label>
+
     <input type=submit value=Upload>
 </form>
 
-{{ div|safe }}
-{{ script|safe }}
+{{ scatter_div | safe }}
+{{ scatter_script | safe }}
+
+{{ means_div | safe }}
+{{ means_script | safe }}
 
 </body>
 </html>
