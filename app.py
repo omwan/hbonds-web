@@ -14,11 +14,20 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def allowed_file(filename):
+    """
+    Determine if the uploaded file is of the allowed extension.
+
+    :param filename: name of file to check
+    :return: whether or not it is a valid filetype
+    """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def get_file():
+    """
+    Retrieve a file from the request object.
+    """
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     file = request.files['file']
 
@@ -30,14 +39,21 @@ def get_file():
 
 @app.route("/", methods=["GET", "POST"])
 def chart():
+    """
+    Generate charts and render on index page.
+
+    :return: index w/ charts if applicable
+    """
     scatter_div = ""
     scatter_script = ""
 
     means_div = ""
     means_script = ""
 
+    graph_name = None
+
     if request.method == "POST":
-        filter_out = request.form.get("filter-out") is None
+        filter_out = request.form.get("filter-out") is not None
         folder, file = get_file()
 
         output_file = count_hbonds.build_output(folder, file, filter_out)
@@ -48,6 +64,8 @@ def chart():
         means_plot = count_hbonds.build_means_scatter(means_file)
         means_script, means_div = components(means_plot)
 
-    return render_template("index.html",
+        graph_name = file.split(".csv")[0]
+
+    return render_template("index.html", name=graph_name,
                            scatter_div=scatter_div, scatter_script=scatter_script,
                            means_div=means_div, means_script=means_script)
