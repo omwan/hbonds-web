@@ -3,15 +3,32 @@ body {
     font-size: 15px;
 }
 
-/*#graphs .col-md-6 {*/
-/*padding:20px;*/
-/*box-sizing: border-box;*/
-/*}*/
+.container {
+    padding-top: 20px;
+    max-width: 1500px;
+    margin: auto;
+}
 
-#upload-form input {
-    background: none !important;
-    color: inherit;
-    border: none;
-    padding: 0 !important;
-    font: inherit;
+.upload-form {
+    border: 1px solid #eee;
+    padding: 20px 20px 10px 20px;
+    width: 200px;
+    margin: auto;
+}
+
+.form-row {
+    margin-bottom:10px;
+}
+
+.graph-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:100%;
+    margin-top:50px;
+}
+
+.graph {
+    margin: 20px;
+    width:600px;
 }

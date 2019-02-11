@@ -45,7 +45,6 @@ def chart():
         scatter_script, scatter_div = components(scatter_plot)
 
         means_file = count_hbonds.build_means_output(folder, output_file)
-        # print(means_file)
         means_plot = count_hbonds.build_means_scatter(means_file)
         means_script, means_div = components(means_plot)
 

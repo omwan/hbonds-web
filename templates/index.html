@@ -21,22 +21,42 @@
 </head>
 <body>
 
-<form method=post enctype=multipart/form-data>
-    <input type=file name=file>
+<div class="container">
 
-    <input type="checkbox" name="filter-out" id="filter-out">
-    <label for="filter-out">
-        Filter out?
-    </label>
+    <div class="upload-form">
 
-    <input type=submit value=Upload>
-</form>
+        <form method=post enctype=multipart/form-data>
+            <div class="form-row">
+                <input type=file name=file>
+            </div>
 
-{{ scatter_div | safe }}
-{{ scatter_script | safe }}
+            <div class="form-row">
+                <input type="checkbox" name="filter-out" id="filter-out">
+                <label for="filter-out">
+                    Filter out?
+                </label>
 
-{{ means_div | safe }}
-{{ means_script | safe }}
+                <input type=submit value=Submit>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="graph-container">
+
+        <div class="graph" id="scatter">
+            {{ scatter_div | safe }}
+            {{ scatter_script | safe }}
+        </div>
+
+        <div class="graph" id="means">
+            {{ means_div | safe }}
+            {{ means_script | safe }}
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
