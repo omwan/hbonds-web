@@ -10,7 +10,12 @@ UPLOAD_FOLDER = '/Users/olivia/Documents/moe'
 ALLOWED_EXTENSIONS = {'csv'}
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+flask_env = os.getenv("FLASK_ENV")
+
+if flask_env == "development":
+    app.config.from_object("config.DevelopmentConfig")
+elif flask_env == "production":
+    app.config.from_object("config.ProductionConfig")
 
 
 def allowed_file(filename):

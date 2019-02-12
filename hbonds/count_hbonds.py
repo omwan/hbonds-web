@@ -6,12 +6,6 @@ import pandas
 from bokeh.models import Whisker, ColumnDataSource
 from bokeh.plotting import figure
 
-moe_dir = "/Users/olivia/Documents/GitHub/hbonds-web/moe"
-
-MOE_HEADERS = ["PDB", "Type", "cb.cb", "sc_.exp_avg", "hb_energy", "Residue.1",
-               "Residue.2", "chainId", "expressionHost", "source", "refinementResolution",
-               "averageBFactor", "chainLength", "ligandId", "hetId", "residueCount"]
-
 
 def add_trendline(p):
     """
@@ -40,7 +34,7 @@ def build_output(upload_folder, filters_file, filter_out):
         for i, row in enumerate(reader):
             pdbs.append(row["PDB"])
 
-    moe = open(os.path.join(moe_dir, "output.csv"))
+    moe = open(os.path.join("moe", "output.csv"))
     output_filepath = os.path.join(upload_folder, "output_" + filters_file)
     output = open(output_filepath, "w+")
 
@@ -116,19 +110,14 @@ def build_means_output(upload_folder, output_file):
     return means_filepath
 
 
-def build_full_scatter(filters_file=None):
+def build_full_scatter(filters_file):
     """
     Generate scatter plot from full hbond count data.
 
     :param filters_file: path to output file
     :return: scatter plot
     """
-    if filters_file is None:
-        data_file = os.path.join(moe_dir, "output.csv")
-    else:
-        data_file = filters_file
-
-    data = pandas.read_csv(data_file)
+    data = pandas.read_csv(filters_file)
 
     # filter out peptides and high-res species
     data = data[data["residues"] > 50]
@@ -165,7 +154,8 @@ def build_means_scatter(data_file):
     source = ColumnDataSource(data=dict(x=x, y=y, upper=upper, lower=lower))
 
     p.add_layout(
-        Whisker(source=source, base="x", upper="upper", lower="lower", level="overlay")
+        Whisker(source=source, base="x", upper="upper",
+                lower="lower", level="overlay")
     )
 
     return p
