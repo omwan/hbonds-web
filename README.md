@@ -18,6 +18,6 @@ Steps:
 3. Create a virtual environment with ` virtualenv venv`
 4. Run `source venv/bin/activate` to activate the newly created virtual environment
 5. Install dependencies with `pip install -r requirements.txt`
-6. To run locally, set the environment variable `FLASK_ENV=development` and then run  `python -m flask run`
+6. To run locally, run `FLASK_APP=app.py FLASK_ENV=development python -m flask run`
 
 If necessary, replace instances of `pip` with `pip3` or instances of `python` with `python3` to run with Python 3
