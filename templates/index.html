@@ -12,29 +12,25 @@
 
 {% raw %}
 
-<div>
-    <label>Source organism: </label>
-    <select ng-model="submissionForm.source.name">
-        <option ng-repeat="source in sources" value="{{ source.value }}">
-            {{ source.value }}
+<div ng-repeat="filter in filters">
+    <label>{{ filter.label }}: </label>
+    <select ng-model="filters[$index].name">
+        <option ng-repeat="col in columns[filter.header]"
+                value="{{ col.value }}">
+            {{ col.value }}
         </option>
     </select>
 
     <label>Filter out?</label>
-    <input type="checkbox" ng-model="submissionForm.source.filtered" />
+    <input type="checkbox" ng-model="filters[$index].filtered" />
 </div>
 
-<div>
-    <label>Expression host: </label>
-    <select ng-model="submissionForm.host.name">
-        <option ng-repeat="host in hosts" value="{{ host.value }}">
-            {{ host.value }}
-        </option>
-    </select>
-
-    <label>Filter out?</label>
-    <input type="checkbox" ng-model="submissionForm.host.filtered" />
-</div>
+<label>Header type</label>
+<select ng-model="header">
+    <option value="source">Source Organism</option>
+    <option value="expressionHost">Expression Host</option>
+</select>
+<button ng-click="addFilter($event)">add filter</button>
 
 <button ng-click="submitForm($event)">submit</button>
 

@@ -1,19 +1,32 @@
 app.controller('controller', ['$scope', '$http', function ($scope, $http) {
-    $scope.submissionForm = {};
+    $scope.filters = [];
+
+    $scope.columns = {};
+
+    $scope.header = "";
 
     $http.get("/api/categoricals/source?limit=100").then(function (response) {
-        $scope.sources = response.data;
+        $scope.columns["source"] = response.data;
     });
 
     $http.get("/api/categoricals/expressionHost?limit=100").then(function (response) {
-        $scope.hosts = response.data;
+        $scope.columns["expressionHost"] = response.data;
     });
 
-    $scope.submitForm = function(event) {
-        console.log(event);
-        console.log($scope.submissionForm);
+    $scope.addFilter = function (event) {
+        var label = "";
+        if ($scope.header === "source") {
+            label = "Source Organism";
+        } else if ($scope.header === "expressionHost") {
+            label = "Expression Host"
+        }
+        $scope.filters.push({header: $scope.header, label: label});
+    };
 
-        $http.post("/api/pdbfilter", $scope.submissionForm).then(function(response) {
+    $scope.submitForm = function (event) {
+        console.log($scope.filters);
+
+        $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             console.log(response.data);
         });
     };
