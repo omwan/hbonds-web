@@ -5,7 +5,9 @@ from flask import Flask, request, render_template, jsonify
 from werkzeug.utils import secure_filename
 
 from db import db, numerical_field, categorical_field
-from hbonds import count_hbonds
+from hbonds import count_hbonds, filter_moe
+
+import json
 
 UPLOAD_FOLDER = '/Users/olivia/Documents/moe'
 ALLOWED_EXTENSIONS = {'csv'}
@@ -89,3 +91,11 @@ def get_numerical_fields(header):
 def get_categorical_fields(header):
     limit = request.args.get("limit")
     return jsonify(categorical_field.get_highest_counts(header, limit))
+
+
+@app.route("/api/pdbfilter", methods=["POST"])
+def build_new_moe():
+    filters = json.loads(request.data)
+    print(filters)
+    return "hey"
+    # return filter_moe.filter_moe(filters)
