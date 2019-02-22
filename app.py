@@ -79,11 +79,13 @@ def chart():
                            means_div=means_div, means_script=means_script)
 
 
-@app.route("/api/numericals")
-def get_numerical_fields():
-    return jsonify(numerical_field.get_all())
+@app.route("/api/numericals/<header>")
+def get_numerical_fields(header):
+    limit = request.args.get("limit")
+    return jsonify(numerical_field.get_highest_counts(header, limit))
 
 
-@app.route("/api/categoricals")
-def get_categorical_fields():
-    return jsonify(categorical_field.get_all())
+@app.route("/api/categoricals/<header>")
+def get_categorical_fields(header):
+    limit = request.args.get("limit")
+    return jsonify(categorical_field.get_highest_counts(header, limit))

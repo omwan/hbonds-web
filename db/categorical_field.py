@@ -1,4 +1,4 @@
-from db import db
+from db import db, convert_to_map
 
 
 class CategoricalField(db.Model):
@@ -12,10 +12,13 @@ class CategoricalField(db.Model):
 
 def get_all():
     query = CategoricalField.query.all()
-    return list(map(lambda x: {
-        "id": x.id,
-        "header": x.header,
-        "value": x.value,
-        "count": x.count
-    }, query))
+    return convert_to_map(query)
 
+
+def get_highest_counts(header, limit=500):
+    query = CategoricalField.query\
+        .filter_by(header=header) \
+        .order_by(CategoricalField.count.desc()) \
+        .limit(limit) \
+        .all()
+    return convert_to_map(query)

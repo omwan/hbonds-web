@@ -1,4 +1,4 @@
-from db import db
+from db import db, convert_to_map
 
 
 class NumericalField(db.Model):
@@ -12,9 +12,12 @@ class NumericalField(db.Model):
 
 def get_all():
     query = NumericalField.query.all()
-    return list(map(lambda x: {
-        "id": x.id,
-        "header": x.header,
-        "value": x.value,
-        "count": x.count
-    }, query))
+    return convert_to_map(query)
+
+
+def get_highest_counts(limit):
+    query = NumericalField.query \
+        .order_by(NumericalField.count.desc()) \
+        .limit(limit) \
+        .all()
+    return convert_to_map(query)
