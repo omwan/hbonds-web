@@ -1,9 +1,10 @@
 import os
 
 from bokeh.embed import components
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from werkzeug.utils import secure_filename
 
+from db import db, numerical_field, categorical_field
 from hbonds import count_hbonds
 
 UPLOAD_FOLDER = '/Users/olivia/Documents/moe'
@@ -16,6 +17,8 @@ if flask_env == "development":
     app.config.from_object("config.DevelopmentConfig")
 elif flask_env == "production":
     app.config.from_object("config.ProductionConfig")
+
+db.init_app(app)
 
 
 def allowed_file(filename):
@@ -74,3 +77,13 @@ def chart():
     return render_template("index.html", name=graph_name,
                            scatter_div=scatter_div, scatter_script=scatter_script,
                            means_div=means_div, means_script=means_script)
+
+
+@app.route("/api/numericals")
+def get_numerical_fields():
+    return jsonify(numerical_field.get_all())
+
+
+@app.route("/api/categoricals")
+def get_categorical_fields():
+    return jsonify(categorical_field.get_all())

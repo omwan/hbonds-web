@@ -1,5 +1,9 @@
+import os
+
+
 class Config(object):
     DEBUG = False
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
 
 class ProductionConfig(Config):
