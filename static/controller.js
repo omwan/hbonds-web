@@ -1,8 +1,6 @@
 app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.filters = [];
-
     $scope.columns = {};
-
     $scope.header = "";
 
     $http.get("/api/categoricals/source?limit=100").then(function (response) {
@@ -28,15 +26,17 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     };
 
     $scope.deleteFilter = function(event, index) {
-        console.log(index);
         $scope.filters.splice(index, 1);
     };
 
     $scope.submitForm = function (event) {
-        console.log($scope.filters);
-
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
-            console.log(response.data);
+            $scope.filename = response.data.filename;
+            console.log($scope.filename);
         });
+    };
+
+    $scope.downloadFilter = function(event) {
+        window.open("/api/filters/" + $scope.filename);
     };
 }]);

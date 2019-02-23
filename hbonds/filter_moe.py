@@ -12,9 +12,10 @@ def get_filename():
     return "filtered_pdbs_%s.csv" % int(time())
 
 
-def filter_moe(filters):
+def filter_moe(upload_folder, filters):
     moe = open("moe/moe6.csv")
-    output = open(os.path.join("moe", get_filename()), "w+")
+    filename = get_filename()
+    output = open(os.path.join(upload_folder, filename), "w+")
 
     col_filters = build_filter(filters)
 
@@ -45,7 +46,7 @@ def filter_moe(filters):
                 else:
                     continue
 
-    return output.name
+    return filename
 
 
 def build_filter(filters):

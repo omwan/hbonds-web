@@ -1,13 +1,12 @@
+import json
 import os
 
 from bokeh.embed import components
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
 from db import db, numerical_field, categorical_field
 from hbonds import count_hbonds, filter_moe
-
-import json
 
 UPLOAD_FOLDER = '/Users/olivia/Documents/moe'
 ALLOWED_EXTENSIONS = {'csv'}
@@ -54,8 +53,6 @@ def chart():
 
     :return: index w/ charts if applicable
     """
-    print("making graph")
-
     scatter_div = ""
     scatter_script = ""
 
@@ -86,7 +83,7 @@ def chart():
 @app.route("/api/numericals/<header>")
 def get_numerical_fields(header):
     limit = request.args.get("limit")
-    return jsonify(numerical_field.get_highest_counts(header, limit))
+    return jsonify(numerical_field.get_highest_counts(limit))
 
 
 @app.route("/api/categoricals/<header>")
@@ -99,6 +96,12 @@ def get_categorical_fields(header):
 def build_new_moe():
     filters = json.loads(request.data)
     return jsonify({
-        "filename": filter_moe.filter_moe(filters),
+        "filename": filter_moe.filter_moe(app.config["UPLOAD_FOLDER"], filters),
         "params": filters
     })
+
+
+@app.route("/api/filters/<filename>")
+def download_filter(filename):
+    folder = app.config["UPLOAD_FOLDER"]
+    return send_from_directory(folder, filename, as_attachment=True)
