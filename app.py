@@ -54,6 +54,8 @@ def chart():
 
     :return: index w/ charts if applicable
     """
+    print("making graph")
+
     scatter_div = ""
     scatter_script = ""
 
@@ -96,6 +98,7 @@ def get_categorical_fields(header):
 @app.route("/api/pdbfilter", methods=["POST"])
 def build_new_moe():
     filters = json.loads(request.data)
-    print(filters)
-    return "hey"
-    # return filter_moe.filter_moe(filters)
+    return jsonify({
+        "filename": filter_moe.filter_moe(filters),
+        "params": filters
+    })

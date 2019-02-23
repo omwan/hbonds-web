@@ -20,7 +20,16 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         } else if ($scope.header === "expressionHost") {
             label = "Expression Host"
         }
-        $scope.filters.push({header: $scope.header, label: label});
+        $scope.filters.push({
+            header: $scope.header,
+            label: label,
+            filtered: false
+        });
+    };
+
+    $scope.deleteFilter = function(event, index) {
+        console.log(index);
+        $scope.filters.splice(index, 1);
     };
 
     $scope.submitForm = function (event) {

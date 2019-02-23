@@ -22,20 +22,23 @@
     </select>
 
     <label>Filter out?</label>
-    <input type="checkbox" ng-model="filters[$index].filtered" />
+    <input type="checkbox" ng-model="filters[$index].filtered"/>
+
+    <button ng-click="deleteFilter($event, $index)">delete filter</button>
 </div>
 
-<label>Header type</label>
-<select ng-model="header">
-    <option value="source">Source Organism</option>
-    <option value="expressionHost">Expression Host</option>
-</select>
-<button ng-click="addFilter($event)">add filter</button>
+<div>
+    <label>Header type</label>
+    <select ng-model="header">
+        <option value="source">Source Organism</option>
+        <option value="expressionHost">Expression Host</option>
+    </select>
+    <button ng-click="addFilter($event)">add filter</button>
+</div>
 
 <button ng-click="submitForm($event)">submit</button>
 
 {% endraw %}
-
 
 <script src="{{ url_for('static', filename='controller.js') }}"></script>
 
