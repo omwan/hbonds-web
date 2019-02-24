@@ -30,36 +30,49 @@
 
 <div class="app" ng-app="app" ng-controller="controller">
 
-<div ng-repeat="filter in filters">
-    <label>{{ filter.label }}: </label>
-    <select ng-model="filters[$index].name">
-        <option ng-repeat="col in columns[filter.header]"
-                value="{{ col.value }}">
-            {{ col.value }}
-        </option>
-    </select>
+    <div ng-repeat="filter in filters">
+        <label>{{ filter.label }}: </label>
+        <select ng-model="filters[$index].name" ng-if="!filter.numerical">
+            <option ng-repeat="col in columns[filter.header]"
+                    value="{{ col.value }}">
+                {{ col.value }}
+            </option>
+        </select>
 
-    <label>Filter out?</label>
-    <input type="checkbox" ng-model="filters[$index].filtered"/>
+        <span ng-if="filter.numerical">
+        <select ng-model="filters[$index].comparator">
+            <option>&lt;</option>
+            <option>&gt;</option>
+            <option>=</option>
+        </select>
 
-    <button ng-click="deleteFilter($event, $index)">delete filter</button>
-</div>
+        <input type="text"
+               ng-model="filters[$index].comparedValue"
+               placeholder="value"/>
+        </span>
 
-<div>
-    <label>Header type</label>
-    <select ng-model="header">
-        <option value="source">Source Organism</option>
-        <option value="expressionHost">Expression Host</option>
-    </select>
-    <button ng-click="addFilter($event)">add filter</button>
-</div>
+        <span ng-if="!filter.numerical">
+            <label>Filter out?</label>
+            <input type="checkbox" ng-model="filters[$index].filtered"/>
+        </span>
 
-<button ng-click="submitForm($event)">submit</button>
+        <button ng-click="deleteFilter($event, $index)">delete filter</button>
+    </div>
 
-<div ng-if="filename">
-    <div>{{ filename }}</div>
-    <button ng-click="downloadFilter($event)">download</button>
-</div>
+    <div>
+        <label>Header type</label>
+        <select ng-model="header">
+            <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
+        </select>
+        <button ng-click="addFilter($event)">add filter</button>
+    </div>
+
+    <button ng-click="submitForm($event)">submit</button>
+
+    <div ng-if="filename">
+        <div>{{ filename }}</div>
+        <button ng-click="downloadFilter($event)">download</button>
+    </div>
 
 </div>
 

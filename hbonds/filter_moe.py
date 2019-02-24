@@ -17,7 +17,7 @@ def filter_moe(upload_folder, filters):
     filename = get_filename()
     output = open(os.path.join(upload_folder, filename), "w+")
 
-    col_filters = build_filter(filters)
+    col_filters, numericals = build_filter(filters)
 
     with moe, output:
         reader = csv.DictReader(moe)
@@ -31,9 +31,13 @@ def filter_moe(upload_folder, filters):
                 print("Reached row %s" % i)
 
             write_row = False
+
             for key, value in row.items():
                 if (key, value) in col_filters["use"]:
                     write_row = True
+
+            for item in numericals:
+                write_row = evaluate_numerical(row, item)
 
             for key, value in row.items():
                 if (key, value) in col_filters["ignore"]:
@@ -49,20 +53,37 @@ def filter_moe(upload_folder, filters):
     return filename
 
 
+def evaluate_numerical(row, item):
+    moe_value = float(row[item["header"]])
+    compared_value = float(item["comparedValue"])
+
+    if item["comparator"] == "=":
+        return moe_value == compared_value
+    elif item["comparator"] == "<":
+        return moe_value < compared_value
+    elif item["comparator"] == ">":
+        return moe_value > compared_value
+
+
 def build_filter(filters):
     final_filter = {
         "use": set(),
         "ignore": set()
     }
 
-    for f in filters:
-        if f["filtered"]:
-            ignores = final_filter["ignore"]
-            ignores.add((f["header"], f["name"]))
-            final_filter["ignore"] = ignores
-        else:
-            used = final_filter["use"]
-            used.add((f["header"], f["name"]))
-            final_filter["use"] = used
+    numericals = []
 
-    return final_filter
+    for f in filters:
+        if f["numerical"]:
+            numericals.append(f)
+        else:
+            if f["filtered"]:
+                ignores = final_filter["ignore"]
+                ignores.add((f["header"], f["name"]))
+                final_filter["ignore"] = ignores
+            else:
+                used = final_filter["use"]
+                used.add((f["header"], f["name"]))
+                final_filter["use"] = used
+
+    return final_filter, numericals

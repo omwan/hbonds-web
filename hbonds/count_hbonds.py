@@ -45,7 +45,10 @@ def build_output(upload_folder, filters_file, filter_out):
         writer = csv.DictWriter(output, fieldnames=output_headers)
         writer.writeheader()
 
-        for row in reader:
+        for i, row in enumerate(reader):
+            if i % 10000 == 0:
+                print("Reached row %s" % i)
+
             if filter_out and row["PDB"] in pdbs:
                 continue
             elif not filter_out and row["PDB"] not in pdbs:

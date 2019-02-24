@@ -3,6 +3,17 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.columns = {};
     $scope.header = "";
 
+    $scope.labels = {
+        "source": "Source Organism",
+        "expressionHost": "Expression Host",
+        "averageBFactor": "Average B Factor",
+        "residueCount": "Residue Count",
+        "chainLength": "Chain Length",
+        "refinementResolution": "Resolution"
+    };
+
+    let numericals = ["averageBFactor", "residueCount", "chainLength", "refinementResolution"];
+
     $http.get("/api/categoricals/source?limit=100").then(function (response) {
         $scope.columns["source"] = response.data;
     });
@@ -12,16 +23,11 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     });
 
     $scope.addFilter = function (event) {
-        var label = "";
-        if ($scope.header === "source") {
-            label = "Source Organism";
-        } else if ($scope.header === "expressionHost") {
-            label = "Expression Host"
-        }
         $scope.filters.push({
             header: $scope.header,
-            label: label,
-            filtered: false
+            label: $scope.labels[$scope.header],
+            filtered: false,
+            numerical: numericals.indexOf($scope.header) >= 0
         });
     };
 
@@ -30,6 +36,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     };
 
     $scope.submitForm = function (event) {
+        console.log($scope.filters);
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
             console.log($scope.filename);
