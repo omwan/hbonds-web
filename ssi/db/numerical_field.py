@@ -1,4 +1,4 @@
-from db import db, convert_to_map
+from ssi.db import db, convert_to_map
 
 
 class NumericalField(db.Model):

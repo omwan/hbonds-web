@@ -2,24 +2,13 @@ import json
 import os
 
 from bokeh.embed import components
-from flask import Flask, request, render_template, jsonify, send_from_directory
+from flask import request, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
-from db import db, numerical_field, categorical_field
-from hbonds import count_hbonds, filter_moe
+from ssi.db import numerical_field, categorical_field
+from ssi.hbonds import count_hbonds, filter_moe
 
-UPLOAD_FOLDER = '/Users/olivia/Documents/moe'
-ALLOWED_EXTENSIONS = {'csv'}
-
-app = Flask(__name__)
-flask_env = os.getenv("FLASK_ENV")
-
-if flask_env == "development":
-    app.config.from_object("config.DevelopmentConfig")
-elif flask_env == "production":
-    app.config.from_object("config.ProductionConfig")
-
-db.init_app(app)
+from ssi import app
 
 
 def allowed_file(filename):
@@ -29,8 +18,9 @@ def allowed_file(filename):
     :param filename: name of file to check
     :return: whether or not it is a valid filetype
     """
+    allowed_extensions = {'csv'}
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 def get_file():
