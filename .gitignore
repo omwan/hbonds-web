@@ -8,3 +8,4 @@ __pycache__
 
 # Project files
 moe/moe6.csv
+moe/filtered*.csv

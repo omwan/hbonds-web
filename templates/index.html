@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bar charts with Bokeh!</title>
+    <title>Title</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+
     <link
             href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.css"
             rel="stylesheet" type="text/css">
@@ -18,10 +21,62 @@
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+{% raw %}
+
+<div class="app" ng-app="app" ng-controller="controller">
+
+    <div ng-repeat="filter in filters">
+        <label>{{ filter.label }}: </label>
+        <select ng-model="filters[$index].name" ng-if="!filter.numerical">
+            <option ng-repeat="col in columns[filter.header]"
+                    value="{{ col.value }}">
+                {{ col.value }}
+            </option>
+        </select>
+
+        <span ng-if="filter.numerical">
+        <select ng-model="filters[$index].comparator">
+            <option>&lt;</option>
+            <option>&gt;</option>
+            <option>=</option>
+        </select>
+
+        <input type="text"
+               ng-model="filters[$index].comparedValue"
+               placeholder="value"/>
+        </span>
+
+        <span ng-if="!filter.numerical">
+            <label>Filter out?</label>
+            <input type="checkbox" ng-model="filters[$index].filtered"/>
+        </span>
+
+        <button ng-click="deleteFilter($event, $index)">delete filter</button>
+    </div>
+
+    <div>
+        <label>Header type</label>
+        <select ng-model="header">
+            <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
+        </select>
+        <button ng-click="addFilter($event)">add filter</button>
+    </div>
+
+    <button ng-click="submitForm($event)">submit</button>
+
+    <div ng-if="filename">
+        <div>{{ filename }}</div>
+        <button ng-click="downloadFilter($event)">download</button>
+    </div>
+
+</div>
+
+{% endraw %}
 
 <div class="container">
 
@@ -63,6 +118,8 @@
     </div>
 
 </div>
+
+<script src="{{ url_for('static', filename='controller.js') }}"></script>
 
 </body>
 </html>
