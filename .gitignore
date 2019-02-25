@@ -9,3 +9,11 @@ __pycache__
 # Project files
 moe/moe6.csv
 moe/filtered*.csv
+moe/uploads/
+
+# Deploy files
+*.ini
+*.conf
+
+# Mac files
+.DS_Store
