@@ -54,6 +54,9 @@ def filter_moe(upload_folder, filters):
 
 
 def evaluate_numerical(row, item):
+    if row[item["header"]] == "NA":
+        return False
+
     moe_value = float(row[item["header"]])
     compared_value = float(item["comparedValue"])
 
