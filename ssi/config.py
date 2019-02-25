@@ -7,8 +7,8 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    UPLOAD_FOLDER = "/app/moe/uploads"
-    MOE_FOLDER = "/app/moe"
+    UPLOAD_FOLDER = "/home/ssi/hbonds-web/moe/uploads"
+    MOE_FOLDER = "/home/ssi/hbonds-web/moe"
 
 
 class DevelopmentConfig(Config):
