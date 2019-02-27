@@ -59,5 +59,27 @@ def get_hbond_counts():
 
 
 def get_hbond_type_counts():
-    query = db.engine.execute('SELECT "PDB", "Type", count(distinct ("Type", "cb.cb")) FROM moe GROUP BY "PDB", "Type"')
+    query_string = 'SELECT "PDB", "Type", count(distinct ("Type", "cb.cb")) ' \
+                   'FROM moe GROUP BY "PDB", "Type"'
+    query = db.engine.execute(query_string)
     return query
+
+
+def get_pdbs_by_filters(filter_string):
+    query_string = """
+    SELECT
+        "PDB",
+        count(DISTINCT "cb.cb") as "hbonds",
+        "chainLength" as "residues",
+        count(DISTINCT "cb.cb") / CAST("chainLength" AS FLOAT) AS "hbonds/residues",
+        "refinementResolution" as "resolution"
+    FROM
+        moe
+    WHERE
+        %s
+    GROUP BY
+        "PDB",
+        "refinementResolution",
+        "chainLength"
+    """
+    return db.engine.execute(query_string % filter_string)
