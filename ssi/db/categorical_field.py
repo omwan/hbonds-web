@@ -8,6 +8,14 @@ class CategoricalField(db.Model):
     header = db.Column(db.String(120), unique=False, nullable=False)
     value = db.Column(db.String(1000), unique=False, nullable=False)
     count = db.Column(db.Integer, unique=False, nullable=False)
+    
+    def to_map(self):
+        return {
+            "id": self.id,
+            "header": self.header,
+            "value": self.value,
+            "count": self.count
+        }
 
 
 def get_all():
@@ -21,4 +29,4 @@ def get_highest_counts(header, limit=500):
         .order_by(CategoricalField.count.desc()) \
         .limit(limit) \
         .all()
-    return convert_to_map(query)
+    return convert_to_map(query, CategoricalField.to_map)

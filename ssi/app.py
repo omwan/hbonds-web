@@ -5,10 +5,9 @@ from bokeh.embed import components
 from flask import request, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
-from ssi.db import numerical_field, categorical_field
-from ssi.hbonds import count_hbonds, filter_moe
-
 from ssi import app
+from ssi.db import numerical_field, categorical_field, moe
+from ssi.hbonds import count_hbonds, filter_moe
 
 
 def allowed_file(filename):
@@ -95,3 +94,14 @@ def build_new_moe():
 def download_filter(filename):
     folder = app.config["UPLOAD_FOLDER"]
     return send_from_directory(folder, filename, as_attachment=True)
+
+
+# @app.route("/api/moe/<pdb>")
+# def get_moes(pdb):
+#     return jsonify([row.to_map() for row in moe.get_all_by_pdb(pdb)])
+#
+#
+# @app.route("/api/moe/counts")
+# def get_counts():
+#     # return jsonify(dict(moe.get_hbond_type_counts()))
+#     return jsonify([dict(row) for row in moe.get_hbond_type_counts()])
