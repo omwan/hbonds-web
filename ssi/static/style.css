@@ -33,3 +33,18 @@ body {
     margin: 20px;
     width: 600px;
 }
+
+.spinner {
+    z-index: 99999;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+}

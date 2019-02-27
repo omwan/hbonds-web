@@ -12,6 +12,8 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         "refinementResolution": "Resolution"
     };
 
+    $scope.isLoading = false;
+
     let numericals = ["averageBFactor", "residueCount", "chainLength", "refinementResolution"];
 
     $http.get("/api/categoricals/source?limit=100").then(function (response) {
@@ -37,9 +39,10 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
 
     $scope.submitForm = function (event) {
         console.log($scope.filters);
+        $scope.isLoading = true;
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
-            console.log($scope.filename);
+            $scope.isLoading = false;
         });
     };
 
