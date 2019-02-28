@@ -86,7 +86,7 @@
                 <h2>Select filters</h2>
                 <label>Header type</label>
                 <select ng-model="header"
-                        ng-init="header = 'source'">
+                        ng-init="header = 'Type'">
                     <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
                 </select>
                 <button ng-click="addFilter($event)">add filter</button>

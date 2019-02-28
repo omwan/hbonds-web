@@ -5,32 +5,47 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.header = "";
     $scope.isLoading = false;
     $scope.labels = {
-        "source": "Source Organism",
-        "expressionHost": "Expression Host",
-        "averageBFactor": "Average B Factor",
-        "residueCount": "Residue Count",
-        "chainLength": "Chain Length",
-        "refinementResolution": "Resolution",
+        "Type": "Bond Type",
+        "cb.cb": "cb.cb",
+        "sc_.exp_avg": "sc_.exp_avg",
+        "hb_energy": "Bond Energy",
         "residue": "Contains Residue",
-        "Type": "Hydrogen Bond Type"
+        "expressionHost": "Expression Host",
+        "source": "Source Organism",
+        "refinementResolution": "Resolution",
+        "averageBFactor": "Average B Factor",
+        "chainLength": "Chain Length",
+        "ligandId": "Ligand ID",
+        "hetId": "Het ID",
+        "residueCount": "Residue Count"
     };
 
-    let numericals = ["averageBFactor", "residueCount", "chainLength", "refinementResolution"];
+    let numericals = ["averageBFactor", "residueCount", "chainLength",
+        "refinementResolution", "cb.cb", "sc_.exp_avg", "hb_energy"];
+    let categorical_apis = ["source", "expressionHost", "hetId"];
+    let categorical_statics = ["residue", "Type"];
 
     //initalization function to populate categorical dropdowns
     var _init = function () {
-        $http.get("/api/categoricals/source?limit=100").then(function (response) {
-            $scope.columns["source"] = response.data;
+        categorical_apis.forEach(function (cat) {
+            $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
+                $scope.columns[cat] = response.data;
+                if (cat === "hetId") {
+                    $scope.columns["ligandId"] = response.data.map(function (val) {
+                        return {
+                            "header": "ligandId",
+                            "value": val["value"]
+                        }
+                    });
+                }
+            });
         });
 
-        $http.get("/api/categoricals/expressionHost?limit=100").then(function (response) {
-            $scope.columns["expressionHost"] = response.data;
+        categorical_statics.forEach(function (cat) {
+            $http.get("/static/" + cat + ".json").then(function (response) {
+                $scope.columns[cat] = response.data;
+            });
         });
-
-        $http.get("/static/residues.json").then(function (response) {
-            $scope.columns["residue"] = response.data;
-        });
-
     };
 
     //add another filter to the model

@@ -6,7 +6,7 @@ from flask import request, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
 from ssi import app
-from ssi.db import numerical_field, categorical_field, moe
+from ssi.db import categorical_field, moe
 from ssi.hbonds import count_hbonds, filter_moe
 
 
@@ -76,6 +76,12 @@ def chart():
 def get_categorical_fields(header):
     limit = request.args.get("limit")
     return jsonify(categorical_field.get_highest_counts(header, limit))
+
+
+@app.route("/api/categoricals/hetId")
+def get_het_ids():
+    limit = request.args.get("limit")
+    return jsonify(moe.get_het_ids(limit))
 
 
 @app.route("/api/pdbfilter", methods=["POST"])

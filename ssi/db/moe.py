@@ -1,6 +1,6 @@
 from sqlalchemy import func, distinct
 
-from ssi.db import db
+from ssi.db import db, convert_to_map
 
 
 class Moe(db.Model):
@@ -106,3 +106,26 @@ def get_residue_data_from_filters(filter_string):
         "chainLength";
     """
     return db.engine.execute(query_string % filter_string)
+
+
+def get_het_ids(limit=500):
+    query_string = """
+    SELECT
+        DISTINCT "hetId",
+        count(*)
+    FROM
+        moe
+    WHERE
+        "hetId" != ''
+    GROUP BY
+        "hetId"
+    ORDER BY
+        count(*)
+        DESC
+    LIMIT %s;
+    """
+    return convert_to_map(db.engine.execute(query_string % limit), lambda x: {
+        "count": x.count,
+        "header": "hetId",
+        "value": x.hetId
+    })
