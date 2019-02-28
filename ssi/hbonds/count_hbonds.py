@@ -77,8 +77,14 @@ def build_full_scatter(filters_file):
     x = data["hbonds/residues"]
     y = data["resolution"]
 
-    p = figure()
-    p.scatter(x, y)
+    source = ColumnDataSource(data=dict(
+        x=x,
+        y=y,
+        pdb=data["PDB"]
+    ))
+
+    p = figure(tooltips="@pdb")
+    p.scatter('x', 'y', source=source)
 
     return p
 
@@ -102,7 +108,12 @@ def build_means_scatter(data_file, bucket_size):
     p = figure(y_range=[1, 4])
     p.scatter(x, y)
 
-    source = ColumnDataSource(data=dict(x=x, y=y, upper=upper, lower=lower))
+    source = ColumnDataSource(data=dict(
+        x=x,
+        y=y,
+        upper=upper,
+        lower=lower,
+    ))
 
     p.add_layout(
         Whisker(source=source, base="x", upper="upper",
