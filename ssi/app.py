@@ -36,7 +36,7 @@ def get_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return app.config["UPLOAD_FOLDER"], filename
     else:
-        return app.config["UPLOAD_FOLDER"], "output.csv"
+        return app.config["MOE_FOLDER"], "output.csv"
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -58,10 +58,10 @@ def chart():
         bucket_size = int(request.form.get("min-bucket-size", default=20))
         folder, file = get_file()
 
-        scatter_plot = count_hbonds.build_full_scatter(os.path.join(app.config["UPLOAD_FOLDER"], file))
+        scatter_plot = count_hbonds.build_full_scatter(os.path.join(folder, file))
         scatter_script, scatter_div = components(scatter_plot)
 
-        means_file = count_hbonds.build_means_output(folder, file)
+        means_file = count_hbonds.build_means_output(folder, app.config["UPLOAD_FOLDER"], file)
         means_plot = count_hbonds.build_means_scatter(means_file, bucket_size)
         means_script, means_div = components(means_plot)
 

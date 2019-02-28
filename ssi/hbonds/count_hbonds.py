@@ -7,7 +7,7 @@ from bokeh.models import Whisker, ColumnDataSource
 from bokeh.plotting import figure
 
 
-def build_means_output(upload_folder, output_file):
+def build_means_output(upload_folder, write_folder, output_file):
     """
     Generate file w/ calculated means, standard deviations, etc. for
     hbond/residue ratio buckets.
@@ -16,7 +16,7 @@ def build_means_output(upload_folder, output_file):
     :param output_file: file w/ raw hbond data
     :return: filepath to newly written means file
     """
-    means_filepath = os.path.join(upload_folder, "means_" + output_file)
+    means_filepath = os.path.join(write_folder, "means_" + output_file)
     means_file = open(means_filepath, "w+")
     csvfile = open(os.path.join(upload_folder, output_file), encoding="utf-8-sig")
 
