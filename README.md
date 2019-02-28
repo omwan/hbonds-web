@@ -1,6 +1,6 @@
 # hbonds-web
 
-![build status](https://travis-ci.com/omwan/hbonds-web.svg?token=5xWekA9qZuZiHaZmy9Yj&branch=master)
+[![build status](https://travis-ci.com/omwan/hbonds-web.svg?token=5xWekA9qZuZiHaZmy9Yj&branch=master)](https://travis-ci.com/omwan/hbonds-web)
 
 Web server to generate scatter plots for SSI data from PDB
 
