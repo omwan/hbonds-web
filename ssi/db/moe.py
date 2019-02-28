@@ -1,6 +1,6 @@
 from sqlalchemy import func, distinct
 
-from ssi.db import db
+from ssi.db import db, convert_to_map
 
 
 class Moe(db.Model):
@@ -65,7 +65,7 @@ def get_hbond_type_counts():
     return query
 
 
-def get_pdbs_by_filters(filter_string):
+def get_data_from_filters(filter_string):
     query_string = """
     SELECT
         "PDB",
@@ -83,3 +83,49 @@ def get_pdbs_by_filters(filter_string):
         "chainLength"
     """
     return db.engine.execute(query_string % filter_string)
+
+
+def get_residue_data_from_filters(filter_string):
+    query_string = """
+    SELECT
+        "PDB",
+        count(DISTINCT ("PDB", "cb.cb", 
+            substring("Residue.1", 6, 3), substring("Residue.2", 6, 3))) AS "hbonds",
+        "chainLength" AS "residues",
+        count(DISTINCT ("PDB", "cb.cb", 
+            substring("Residue.1", 6, 3), substring("Residue.2", 6, 3))) 
+                / CAST("chainLength" AS FLOAT) AS "hbonds/residues",
+        "refinementResolution" AS "resolution"
+    FROM
+        moe
+    WHERE 
+        %s
+    GROUP BY
+        "PDB",
+        "refinementResolution",
+        "chainLength";
+    """
+    return db.engine.execute(query_string % filter_string)
+
+
+def get_het_ids(limit=500):
+    query_string = """
+    SELECT
+        DISTINCT "hetId",
+        count(*)
+    FROM
+        moe
+    WHERE
+        "hetId" != ''
+    GROUP BY
+        "hetId"
+    ORDER BY
+        count(*)
+        DESC
+    LIMIT %s;
+    """
+    return convert_to_map(db.engine.execute(query_string % limit), lambda x: {
+        "count": x.count,
+        "header": "hetId",
+        "value": x.hetId
+    })

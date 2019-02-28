@@ -5,26 +5,50 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.header = "";
     $scope.isLoading = false;
     $scope.labels = {
-        "source": "Source Organism",
+        "Type": "Bond Type",
+        "cb.cb": "cb.cb",
+        "sc_.exp_avg": "sc_.exp_avg",
+        "hb_energy": "Bond Energy",
+        "residue": "Contains Residue",
         "expressionHost": "Expression Host",
+        "source": "Source Organism",
+        "refinementResolution": "Resolution",
         "averageBFactor": "Average B Factor",
-        "residueCount": "Residue Count",
         "chainLength": "Chain Length",
-        "refinementResolution": "Resolution"
+        "ligandId": "Ligand ID",
+        "hetId": "Het ID",
+        "residueCount": "Residue Count"
     };
 
-    let numericals = ["averageBFactor", "residueCount", "chainLength", "refinementResolution"];
+    let numericals = ["averageBFactor", "residueCount", "chainLength",
+        "refinementResolution", "cb.cb", "sc_.exp_avg", "hb_energy"];
+    let categorical_apis = ["source", "expressionHost", "hetId"];
+    let categorical_statics = ["residue", "Type"];
 
+    //initalization function to populate categorical dropdowns
     var _init = function () {
-        $http.get("/api/categoricals/source?limit=100").then(function (response) {
-            $scope.columns["source"] = response.data;
+        categorical_apis.forEach(function (cat) {
+            $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
+                $scope.columns[cat] = response.data;
+                if (cat === "hetId") {
+                    $scope.columns["ligandId"] = response.data.map(function (val) {
+                        return {
+                            "header": "ligandId",
+                            "value": val["value"]
+                        }
+                    });
+                }
+            });
         });
 
-        $http.get("/api/categoricals/expressionHost?limit=100").then(function (response) {
-            $scope.columns["expressionHost"] = response.data;
+        categorical_statics.forEach(function (cat) {
+            $http.get("/static/" + cat + ".json").then(function (response) {
+                $scope.columns[cat] = response.data;
+            });
         });
     };
 
+    //add another filter to the model
     $scope.addFilter = function (event) {
         $scope.filters.push({
             header: $scope.header,
@@ -34,21 +58,33 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
+    //delete a filter from the model
     $scope.deleteFilter = function (event, index) {
         $scope.filters.splice(index, 1);
     };
 
+    //disable the submit button if there are no filters or there is a
+    //numerical filter with an empty comparedValue field
+    $scope.submitDisabled = function () {
+        let emptyFilters = $scope.filters.filter(function (f) {
+            return f["numerical"] && !("comparedValue" in f);
+        }).length > 0;
+        return $scope.filters.length === 0 || emptyFilters;
+    };
+
+    //post form to server
     $scope.submitForm = function (event) {
-        console.log($scope.filters);
         $scope.isLoading = true;
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
             $scope.isLoading = false;
-        }).finally(function(response) {
+        }).finally(function (response) {
             $scope.isLoading = false;
         });
+        console.log($scope.filters);
     };
 
+    //retrieve generated file from server + download in browser
     $scope.downloadFilter = function (event) {
         window.open("/api/filters/" + $scope.filename);
     };
