@@ -27,12 +27,16 @@ def get_file():
     Retrieve a file from the request object.
     """
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-    file = request.files['file']
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return app.config["UPLOAD_FOLDER"], filename
+    if 'file' in request.files:
+        file = request.files['file']
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return app.config["UPLOAD_FOLDER"], filename
+    else:
+        return app.config["UPLOAD_FOLDER"], "output.csv"
 
 
 @app.route("/", methods=["GET", "POST"])
