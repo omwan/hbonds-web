@@ -1,32 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Title</title>
+    <title>SSI Hydrogen Bonds</title>
 
+    <!--angular -->
+    <script src="https://code.jquery.com/jquery-1.4.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
 
-    <link
-            href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.css"
-            rel="stylesheet" type="text/css">
-    <link
-            href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.css"
-            rel="stylesheet" type="text/css">
-    <link
-            href="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.css"
-            rel="stylesheet" type="text/css">
+    <!--bokeh -->
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.css"
+          rel="stylesheet" type="text/css">
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.css"
+          rel="stylesheet" type="text/css">
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.css"
+          rel="stylesheet" type="text/css">
 
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.js"></script>
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.js"></script>
 
+    <!--fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
 
+    <!--popup script -->
+    <script type="text/javascript" src="{{ url_for('static', filename='popup.js') }}"></script>
+
+    <!--app script + styles -->
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
+<!--popup-->
+<a href="#?w=500" rel="popup_name" class="poplight">
+    <i class="fa fa-info-circle"></i>
+</a>
+
+<div id="popup_name" class="popup_block">
+    <h3>How to use</h3>
+    <p>
+    <ol>
+        <li>Select filter type from "Header type" menu and click "Add filter" button</li>
+        <li>Select filter value from dropdown if present, or select operator and comparison value</li>
+        <li>Repeat as needed to add more filter criteria</li>
+        <li>Toggle the boolean operator (and vs or) for multiple criteria</li>
+        <li>To remove a filter, click the "Delete filter" button to the right of the filter</li>
+        <li>When all filters are selected, click the "Submit" button to generate scatter plot data</li>
+        <li>Click "Download" button to download .csv file with data</li>
+        <li>Upload downloaded file to input labeled "Upload file"</li>
+        <li>Enter minimum bucket size for means graph</li>
+        <li>Click "Submit" button to generate graphs</li>
+    </ol>
+    </p>
+    <p>
+        <a href="mailto:wan.o@husky.neu.edu">Contact</a>
+    </p>
+
+    <a class="close" href="javascript:void(0)">close</a>
+</div>
+
+<!--begin angular code-->
 {% raw %}
 
 <div class="app" ng-app="app" ng-controller="controller">
@@ -92,8 +126,8 @@
         </tr>
     </table>
 
-    <!--<label>Filter on hydrogen bond types?</label>
-    <input type="checkbox" ng-model="filters.hbondType"/>-->
+    <!--<label>Filter on hydrogen bond types?</label>-->
+    <!--<input type="checkbox" ng-model="filters.hbondType"/>-->
 
     <button ng-click="submitForm($event)">submit</button>
 
@@ -105,9 +139,12 @@
 </div>
 
 {% endraw %}
+<!--end angular code-->
 
+<!--flask template code-->
 <div class="container">
 
+    <!--upload form-->
     <div class="upload-form">
 
         <form method=post enctype=multipart/form-data>
@@ -127,8 +164,9 @@
 
     </div>
 
+    <!--graphs-->
     {% if name != None %}
-        <h1>Graph for {{ name }}</h1>
+    <h1>Graph for {{ name }}</h1>
     {% endif %}
 
     <div class="graph-container">

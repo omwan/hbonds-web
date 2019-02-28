@@ -1,8 +1,9 @@
+//controller for angular app
 app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.filters = [];
     $scope.columns = {};
     $scope.header = "";
-
+    $scope.isLoading = false;
     $scope.labels = {
         "source": "Source Organism",
         "expressionHost": "Expression Host",
@@ -12,17 +13,17 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         "refinementResolution": "Resolution"
     };
 
-    $scope.isLoading = false;
-
     let numericals = ["averageBFactor", "residueCount", "chainLength", "refinementResolution"];
 
-    $http.get("/api/categoricals/source?limit=100").then(function (response) {
-        $scope.columns["source"] = response.data;
-    });
+    var _init = function () {
+        $http.get("/api/categoricals/source?limit=100").then(function (response) {
+            $scope.columns["source"] = response.data;
+        });
 
-    $http.get("/api/categoricals/expressionHost?limit=100").then(function (response) {
-        $scope.columns["expressionHost"] = response.data;
-    });
+        $http.get("/api/categoricals/expressionHost?limit=100").then(function (response) {
+            $scope.columns["expressionHost"] = response.data;
+        });
+    };
 
     $scope.addFilter = function (event) {
         $scope.filters.push({
@@ -33,7 +34,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
-    $scope.deleteFilter = function(event, index) {
+    $scope.deleteFilter = function (event, index) {
         $scope.filters.splice(index, 1);
     };
 
@@ -43,10 +44,14 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
             $scope.isLoading = false;
+        }).finally(function(response) {
+            $scope.isLoading = false;
         });
     };
 
-    $scope.downloadFilter = function(event) {
+    $scope.downloadFilter = function (event) {
         window.open("/api/filters/" + $scope.filename);
     };
+
+    _init();
 }]);
