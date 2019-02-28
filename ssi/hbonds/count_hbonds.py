@@ -7,58 +7,6 @@ from bokeh.models import Whisker, ColumnDataSource
 from bokeh.plotting import figure
 
 
-def add_trendline(p):
-    """
-    TODO
-    :param p:
-    :return:
-    """
-    return p
-
-
-def build_output(upload_folder, filters_file, filter_out):
-    """
-    Generate file w/ hbond counts filtered from original output file.
-
-    :param upload_folder: folder to write files to
-    :param filters_file: list of PDBS to use/filter out
-    :param filter_out: whether or not to use/filter out input PDBs
-    :return: filepath to newly created file
-    """
-    pdbs = []
-
-    filters = open(os.path.join(upload_folder, filters_file), encoding='utf-8-sig')
-
-    with filters:
-        reader = csv.DictReader(filters)
-        for i, row in enumerate(reader):
-            pdbs.append(row["PDB"])
-
-    moe = open(os.path.join("moe", "output.csv"))
-    output_filepath = os.path.join(upload_folder, "output_" + filters_file)
-    output = open(output_filepath, "w+")
-
-    with moe, output:
-        reader = csv.DictReader(moe)
-
-        output_headers = ["PDB", "hbonds", "residues", "hbonds/residues", "resolution"]
-        writer = csv.DictWriter(output, fieldnames=output_headers)
-        writer.writeheader()
-
-        for i, row in enumerate(reader):
-            if i % 10000 == 0:
-                print("Reached row %s" % i)
-
-            if filter_out and row["PDB"] in pdbs:
-                continue
-            elif not filter_out and row["PDB"] not in pdbs:
-                continue
-            else:
-                writer.writerow(row)
-
-    return output_filepath
-
-
 def build_means_output(upload_folder, output_file):
     """
     Generate file w/ calculated means, standard deviations, etc. for
@@ -68,10 +16,9 @@ def build_means_output(upload_folder, output_file):
     :param output_file: file w/ raw hbond data
     :return: filepath to newly written means file
     """
-    output_file_name = output_file.rsplit("/", 1)[1]
-    means_filepath = os.path.join(upload_folder, "means_" + output_file_name)
+    means_filepath = os.path.join(upload_folder, "means_" + output_file)
     means_file = open(means_filepath, "w+")
-    csvfile = open(output_file, encoding="utf-8-sig")
+    csvfile = open(os.path.join(upload_folder, output_file), encoding="utf-8-sig")
 
     with csvfile, means_file as out:
         reader = csv.DictReader(csvfile, delimiter=",")
@@ -83,7 +30,7 @@ def build_means_output(upload_folder, output_file):
         buckets = {}
 
         for i, row in enumerate(reader):
-            if float(row["residues"]) <= 50 or float(row["resolution"]) <= 1:
+            if row["resolution"] == "" or float(row["residues"]) <= 50 or float(row["resolution"]) <= 1:
                 continue
 
             headers = {
@@ -125,6 +72,7 @@ def build_full_scatter(filters_file):
     # filter out peptides and high-res species
     data = data[data["residues"] > 50]
     data = data[data["resolution"] > 1]
+    data = data[data["resolution"] < 4]
 
     x = data["hbonds/residues"]
     y = data["resolution"]
@@ -135,7 +83,7 @@ def build_full_scatter(filters_file):
     return p
 
 
-def build_means_scatter(data_file):
+def build_means_scatter(data_file, bucket_size):
     """
     Generate scatter plot from hbond means data.
 
@@ -143,7 +91,7 @@ def build_means_scatter(data_file):
     :return: scatter plot
     """
     data = pandas.read_csv(data_file)
-    data = data[data["count"] > 20]
+    data = data[data["count"] > bucket_size]
 
     x = data["value"]
     y = data["mean"]

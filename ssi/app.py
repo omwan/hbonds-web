@@ -51,15 +51,14 @@ def chart():
     graph_name = None
 
     if request.method == "POST":
-        filter_out = request.form.get("filter-out") is not None
+        bucket_size = int(request.form.get("min-bucket-size", default=20))
         folder, file = get_file()
 
-        output_file = count_hbonds.build_output(folder, file, filter_out)
-        scatter_plot = count_hbonds.build_full_scatter(output_file)
+        scatter_plot = count_hbonds.build_full_scatter(os.path.join(app.config["UPLOAD_FOLDER"], file))
         scatter_script, scatter_div = components(scatter_plot)
 
-        means_file = count_hbonds.build_means_output(folder, output_file)
-        means_plot = count_hbonds.build_means_scatter(means_file)
+        means_file = count_hbonds.build_means_output(folder, file)
+        means_plot = count_hbonds.build_means_scatter(means_file, bucket_size)
         means_script, means_div = components(means_plot)
 
         graph_name = file.split(".csv")[0]
