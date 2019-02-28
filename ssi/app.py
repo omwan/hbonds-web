@@ -68,12 +68,6 @@ def chart():
                            means_div=means_div, means_script=means_script)
 
 
-@app.route("/api/numericals/<header>")
-def get_numerical_fields(header):
-    limit = request.args.get("limit")
-    return jsonify(numerical_field.get_highest_counts(limit))
-
-
 @app.route("/api/categoricals/<header>")
 def get_categorical_fields(header):
     limit = request.args.get("limit")
@@ -93,14 +87,3 @@ def build_new_moe():
 def download_filter(filename):
     folder = app.config["UPLOAD_FOLDER"]
     return send_from_directory(folder, filename, as_attachment=True)
-
-
-# @app.route("/api/moe/<pdb>")
-# def get_moes(pdb):
-#     return jsonify([row.to_map() for row in moe.get_all_by_pdb(pdb)])
-#
-#
-# @app.route("/api/moe/counts")
-# def get_counts():
-#     # return jsonify(dict(moe.get_hbond_type_counts()))
-#     return jsonify([dict(row) for row in moe.get_hbond_type_counts()])

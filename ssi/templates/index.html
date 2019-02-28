@@ -20,7 +20,7 @@
     <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.js"></script>
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
@@ -37,7 +37,8 @@
 
     <div>
         <label>Header type</label>
-        <select ng-model="header">
+        <select ng-model="header"
+                ng-init="header = 'source'">
             <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
         </select>
         <button ng-click="addFilter($event)">add filter</button>
@@ -52,7 +53,9 @@
                 <label>{{ filter.label }}: </label>
             </td>
             <td>
-                <select ng-model="filters[$index].name" ng-if="!filter.numerical">
+                <select ng-model="filters[$index].name"
+                        ng-if="!filter.numerical"
+                        ng-init="filters[$index].name = columns[filter.header][0].value">
                     <option ng-repeat="col in columns[filter.header]"
                             value="{{ col.value }}">
                         {{ col.value }}
@@ -60,7 +63,8 @@
                 </select>
 
                 <span ng-if="filter.numerical">
-                    <select ng-model="filters[$index].comparator">
+                    <select ng-model="filters[$index].comparator"
+                            ng-init="filters[$index].comparator = '<'">
                         <option value="<">&lt;</option>
                         <option value=">">&gt;</option>
                         <option value="=">=</option>
