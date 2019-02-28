@@ -10,7 +10,9 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         "averageBFactor": "Average B Factor",
         "residueCount": "Residue Count",
         "chainLength": "Chain Length",
-        "refinementResolution": "Resolution"
+        "refinementResolution": "Resolution",
+        "residue": "Contains Residue",
+        "Type": "Hydrogen Bond Type"
     };
 
     let numericals = ["averageBFactor", "residueCount", "chainLength", "refinementResolution"];
@@ -24,6 +26,11 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         $http.get("/api/categoricals/expressionHost?limit=100").then(function (response) {
             $scope.columns["expressionHost"] = response.data;
         });
+
+        $http.get("/static/residues.json").then(function (response) {
+            $scope.columns["residue"] = response.data;
+        });
+
     };
 
     //add another filter to the model
@@ -43,8 +50,8 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
 
     //disable the submit button if there are no filters or there is a
     //numerical filter with an empty comparedValue field
-    $scope.submitDisabled = function() {
-        let emptyFilters = $scope.filters.filter(function(f) {
+    $scope.submitDisabled = function () {
+        let emptyFilters = $scope.filters.filter(function (f) {
             return f["numerical"] && !("comparedValue" in f);
         }).length > 0;
         return $scope.filters.length === 0 || emptyFilters;
@@ -56,9 +63,10 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
             $scope.isLoading = false;
-        }).finally(function(response) {
+        }).finally(function (response) {
             $scope.isLoading = false;
         });
+        console.log($scope.filters);
     };
 
     //retrieve generated file from server + download in browser

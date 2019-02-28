@@ -65,7 +65,7 @@ def get_hbond_type_counts():
     return query
 
 
-def get_pdbs_by_filters(filter_string):
+def get_data_from_filters(filter_string):
     query_string = """
     SELECT
         "PDB",
@@ -81,5 +81,28 @@ def get_pdbs_by_filters(filter_string):
         "PDB",
         "refinementResolution",
         "chainLength"
+    """
+    return db.engine.execute(query_string % filter_string)
+
+
+def get_residue_data_from_filters(filter_string):
+    query_string = """
+    SELECT
+        "PDB",
+        count(DISTINCT ("PDB", "cb.cb", 
+            substring("Residue.1", 6, 3), substring("Residue.2", 6, 3))) AS "hbonds",
+        "chainLength" AS "residues",
+        count(DISTINCT ("PDB", "cb.cb", 
+            substring("Residue.1", 6, 3), substring("Residue.2", 6, 3))) 
+                / CAST("chainLength" AS FLOAT) AS "hbonds/residues",
+        "refinementResolution" AS "resolution"
+    FROM
+        moe
+    WHERE 
+        %s
+    GROUP BY
+        "PDB",
+        "refinementResolution",
+        "chainLength";
     """
     return db.engine.execute(query_string % filter_string)
