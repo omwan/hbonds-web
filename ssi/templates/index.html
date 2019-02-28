@@ -48,7 +48,7 @@
         <li>To remove a filter, click the "Delete filter" button to the right of the filter</li>
         <li>When all filters are selected, click the "Submit" button to generate scatter plot data</li>
         <li>Click "Download" button to download .csv file with data</li>
-        <li>Upload downloaded file to input labeled "Upload file"</li>
+        <li>Upload downloaded file to input labeled "Choose file"</li>
         <li>Enter minimum bucket size for means graph</li>
         <li>Click "Submit" button to generate graphs</li>
     </ol>
@@ -60,43 +60,46 @@
     <a class="close" href="javascript:void(0)">close</a>
 </div>
 
-<!--begin angular code-->
-{% raw %}
+<header>
 
-<div class="app" ng-app="app" ng-controller="controller">
+    <!--begin angular code-->
+    {% raw %}
 
-    <div class="spinner" ng-if="isLoading">
-        <i class="fa fa-pulse fa-spinner"></i>
-    </div>
+    <section class="app" ng-app="app" ng-controller="controller">
 
-    <div>
-        <label>Header type</label>
-        <select ng-model="header"
-                ng-init="header = 'source'">
-            <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
-        </select>
-        <button ng-click="addFilter($event)">add filter</button>
-    </div>
+        <div class="spinner" ng-if="isLoading">
+            <i class="fa fa-pulse fa-spinner"></i>
+        </div>
 
-    <table>
-        <tr ng-repeat="filter in filters">
-            <td>
-                <button ng-click="deleteFilter($event, $index)">delete filter</button>
-            </td>
-            <td>
-                <label>{{ filter.label }}: </label>
-            </td>
-            <td>
-                <select ng-model="filters[$index].name"
-                        ng-if="!filter.numerical"
-                        ng-init="filters[$index].name = columns[filter.header][0].value">
-                    <option ng-repeat="col in columns[filter.header]"
-                            value="{{ col.value }}">
-                        {{ col.value }}
-                    </option>
-                </select>
+        <div>
+            <h2>Select filters</h2>
+            <label>Header type</label>
+            <select ng-model="header"
+                    ng-init="header = 'source'">
+                <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
+            </select>
+            <button ng-click="addFilter($event)">add filter</button>
+        </div>
 
-                <span ng-if="filter.numerical">
+        <table>
+            <tr ng-repeat="filter in filters">
+                <td>
+                    <button ng-click="deleteFilter($event, $index)">delete filter</button>
+                </td>
+                <td>
+                    <label>{{ filter.label }}: </label>
+                </td>
+                <td>
+                    <select ng-model="filters[$index].name"
+                            ng-if="!filter.numerical"
+                            ng-init="filters[$index].name = columns[filter.header][0].value">
+                        <option ng-repeat="col in columns[filter.header]"
+                                value="{{ col.value }}">
+                            {{ col.value }}
+                        </option>
+                    </select>
+
+                    <span ng-if="filter.numerical">
                     <select ng-model="filters[$index].comparator"
                             ng-init="filters[$index].comparator = '<'">
                         <option value="<">&lt;</option>
@@ -108,45 +111,43 @@
                            ng-model="filters[$index].comparedValue"
                            placeholder="value"/>
                 </span>
-            </td>
-            <td>
+                </td>
+                <td>
                 <span ng-if="!filter.numerical">
                     <label>Filter out?</label>
                     <input type="checkbox" ng-model="filters[$index].filtered"/>
                 </span>
-            </td>
-            <td>
-                <select ng-model="filters[$index].bool"
-                        ng-init="filters[$index].bool = 'and'"
-                        ng-if="filters.length > 1 && $index != filters.length - 1">
-                    <option value="and">and</option>
-                    <option value="or">or</option>
-                </select>
-            </td>
-        </tr>
-    </table>
+                </td>
+                <td>
+                    <select ng-model="filters[$index].bool"
+                            ng-init="filters[$index].bool = 'and'"
+                            ng-if="filters.length > 1 && $index != filters.length - 1">
+                        <option value="and">and</option>
+                        <option value="or">or</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
 
-    <!--<label>Filter on hydrogen bond types?</label>-->
-    <!--<input type="checkbox" ng-model="filters.hbondType"/>-->
+        <!--<label>Filter on hydrogen bond types?</label>-->
+        <!--<input type="checkbox" ng-model="filters.hbondType"/>-->
 
-    <button ng-click="submitForm($event)">submit</button>
+        <button ng-click="submitForm($event)">submit</button>
 
-    <div ng-if="filename">
-        <div>{{ filename }}</div>
-        <button ng-click="downloadFilter($event)">download</button>
-    </div>
+        <div ng-if="filename">
+            <div>{{ filename }}</div>
+            <button ng-click="downloadFilter($event)">download</button>
+        </div>
 
-</div>
+    </section>
 
-{% endraw %}
-<!--end angular code-->
-
-<!--flask template code-->
-<div class="container">
+    {% endraw %}
+    <!--end angular code-->
 
     <!--upload form-->
-    <div class="upload-form">
+    <section class="upload-form">
 
+        <h2>Upload plot data</h2>
         <form method=post enctype=multipart/form-data>
             <div class="form-row">
                 <input type=file name=file>
@@ -162,7 +163,11 @@
             </div>
         </form>
 
-    </div>
+    </section>
+
+</header>
+
+<main>
 
     <!--graphs-->
     {% if name != None %}
@@ -183,7 +188,9 @@
 
     </div>
 
-</div>
+    </div>
+
+</main>
 
 <script src="{{ url_for('static', filename='controller.js') }}"></script>
 
