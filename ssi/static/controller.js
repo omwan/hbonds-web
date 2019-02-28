@@ -15,6 +15,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
 
     let numericals = ["averageBFactor", "residueCount", "chainLength", "refinementResolution"];
 
+    //initalization function to populate categorical dropdowns
     var _init = function () {
         $http.get("/api/categoricals/source?limit=100").then(function (response) {
             $scope.columns["source"] = response.data;
@@ -25,6 +26,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
+    //add another filter to the model
     $scope.addFilter = function (event) {
         $scope.filters.push({
             header: $scope.header,
@@ -34,12 +36,22 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
+    //delete a filter from the model
     $scope.deleteFilter = function (event, index) {
         $scope.filters.splice(index, 1);
     };
 
+    //disable the submit button if there are no filters or there is a
+    //numerical filter with an empty comparedValue field
+    $scope.submitDisabled = function() {
+        let emptyFilters = $scope.filters.filter(function(f) {
+            return f["numerical"] && !("comparedValue" in f);
+        }).length > 0;
+        return $scope.filters.length === 0 || emptyFilters;
+    };
+
+    //post form to server
     $scope.submitForm = function (event) {
-        console.log($scope.filters);
         $scope.isLoading = true;
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
@@ -49,6 +61,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
+    //retrieve generated file from server + download in browser
     $scope.downloadFilter = function (event) {
         window.open("/api/filters/" + $scope.filename);
     };

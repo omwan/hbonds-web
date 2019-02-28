@@ -3,6 +3,8 @@
 <head>
     <title>SSI Hydrogen Bonds</title>
 
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+
     <!--angular -->
     <script src="https://code.jquery.com/jquery-1.4.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
@@ -38,6 +40,11 @@
 </a>
 
 <div id="popup_name" class="popup_block">
+
+    <a href="#" class="close">
+        <img src="/static/close.png" class="btn_close" title="Close Window" alt="Close"/>
+    </a>
+
     <h3>How to use</h3>
     <p>
     <ol>
@@ -62,108 +69,122 @@
 
 <header>
 
-    <!--begin angular code-->
-    {% raw %}
+    <div class="header-container">
+        <!--begin angular code-->
+        {% raw %}
 
-    <section class="app" ng-app="app" ng-controller="controller">
+        <section class="app" ng-app="app" ng-controller="controller">
 
-        <div class="spinner" ng-if="isLoading">
-            <i class="fa fa-pulse fa-spinner"></i>
-        </div>
-
-        <div>
-            <h2>Select filters</h2>
-            <label>Header type</label>
-            <select ng-model="header"
-                    ng-init="header = 'source'">
-                <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
-            </select>
-            <button ng-click="addFilter($event)">add filter</button>
-        </div>
-
-        <table>
-            <tr ng-repeat="filter in filters">
-                <td>
-                    <button ng-click="deleteFilter($event, $index)">delete filter</button>
-                </td>
-                <td>
-                    <label>{{ filter.label }}: </label>
-                </td>
-                <td>
-                    <select ng-model="filters[$index].name"
-                            ng-if="!filter.numerical"
-                            ng-init="filters[$index].name = columns[filter.header][0].value">
-                        <option ng-repeat="col in columns[filter.header]"
-                                value="{{ col.value }}">
-                            {{ col.value }}
-                        </option>
-                    </select>
-
-                    <span ng-if="filter.numerical">
-                    <select ng-model="filters[$index].comparator"
-                            ng-init="filters[$index].comparator = '<'">
-                        <option value="<">&lt;</option>
-                        <option value=">">&gt;</option>
-                        <option value="=">=</option>
-                    </select>
-
-                    <input type="text"
-                           ng-model="filters[$index].comparedValue"
-                           placeholder="value"/>
-                </span>
-                </td>
-                <td>
-                <span ng-if="!filter.numerical">
-                    <label>Filter out?</label>
-                    <input type="checkbox" ng-model="filters[$index].filtered"/>
-                </span>
-                </td>
-                <td>
-                    <select ng-model="filters[$index].bool"
-                            ng-init="filters[$index].bool = 'and'"
-                            ng-if="filters.length > 1 && $index != filters.length - 1">
-                        <option value="and">and</option>
-                        <option value="or">or</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
-
-        <!--<label>Filter on hydrogen bond types?</label>-->
-        <!--<input type="checkbox" ng-model="filters.hbondType"/>-->
-
-        <button ng-click="submitForm($event)">submit</button>
-
-        <div ng-if="filename">
-            <div>{{ filename }}</div>
-            <button ng-click="downloadFilter($event)">download</button>
-        </div>
-
-    </section>
-
-    {% endraw %}
-    <!--end angular code-->
-
-    <!--upload form-->
-    <section class="upload-form">
-
-        <h2>Upload plot data</h2>
-        <form method=post enctype=multipart/form-data>
-            <div class="form-row">
-                <input type=file name=file>
+            <!--loading spinner-->
+            <div class="spinner" ng-if="isLoading">
+                <i class="fa fa-pulse fa-spinner"></i>
             </div>
 
-            <div class="form-row">
-                <label>Minimum bucket size</label>
-                <input type="number" name="min-bucket-size" min=0 value=20>
+            <!--build filters-->
+            <span class="ng-cloak" ng-cloak>
+            <div>
+                <h2>Select filters</h2>
+                <label>Header type</label>
+                <select ng-model="header"
+                        ng-init="header = 'source'">
+                    <option ng-repeat="(key, value) in labels" value="{{ key }}">{{ value }}</option>
+                </select>
+                <button ng-click="addFilter($event)">add filter</button>
             </div>
 
-            <div class="form-row">
-                <input type=submit value=Submit>
-            </div>
-        </form>
+            <table class="filter-table" cellpadding="0" cellspacing="0">
+                <tr ng-repeat="filter in filters">
+                    <td>
+                        <button ng-click="deleteFilter($event, $index)">delete filter</button>
+                    </td>
 
-    </section>
+                    <td>
+                        <label>{{ filter.label }}: </label>
+                    </td>
+
+                    <td>
+                        <select ng-model="filters[$index].name"
+                                ng-if="!filter.numerical"
+                                ng-init="filters[$index].name = columns[filter.header][0].value">
+                            <option ng-repeat="col in columns[filter.header]"
+                                    value="{{ col.value }}">
+                                {{ col.value }}
+                            </option>
+                        </select>
+
+                        <span ng-if="filter.numerical">
+                        <select ng-model="filters[$index].comparator"
+                                ng-init="filters[$index].comparator = '<'">
+                            <option value="<">&lt;</option>
+                            <option value=">">&gt;</option>
+                            <option value="=">=</option>
+                        </select>
+
+                        <input type="text"
+                               ng-model="filters[$index].comparedValue"
+                               placeholder="value"/>
+                        </span>
+                    </td>
+
+                    <td>
+                        <span ng-if="!filter.numerical">
+                        <label>Filter out?</label>
+                        <input type="checkbox" ng-model="filters[$index].filtered"/>
+                        </span>
+                    </td>
+
+                    <td>
+                        <select ng-model="filters[$index].bool"
+                                ng-init="filters[$index].bool = 'and'"
+                                ng-if="filters.length > 1 && $index != filters.length - 1">
+                            <option value="and">and</option>
+                            <option value="or">or</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+                <!--submit button-->
+            <div>
+                <button ng-click="submitForm($event)"
+                        ng-disabled="submitDisabled()">submit
+                </button>
+            </div>
+
+                <!--download file button-->
+            <div ng-if="filename">
+                <div>{{ filename }}</div>
+                <button ng-click="downloadFilter($event)">download</button>
+            </div>
+        </span>
+
+        </section>
+
+        {% endraw %}
+        <!--end angular code-->
+
+        <!--upload form-->
+        <section class="upload-form">
+
+            <h2>Upload plot data</h2>
+            <form method=post enctype=multipart/form-data>
+                <div class="form-row">
+                    <input type=file name=file>
+                </div>
+
+                <div class="form-row">
+                    <label>Minimum bucket size</label>
+                    <input type="number" name="min-bucket-size" min=0 value=20>
+                </div>
+
+                <div class="form-row">
+                    <input type=submit value=Submit>
+                </div>
+            </form>
+
+        </section>
+
+    </div>
 
 </header>
 
@@ -171,7 +192,7 @@
 
     <!--graphs-->
     {% if name != None %}
-    <h1>Graph for {{ name }}</h1>
+    <h1>Graphs for {{ name }}</h1>
     {% endif %}
 
     <div class="graph-container">
@@ -191,6 +212,11 @@
     </div>
 
 </main>
+
+<footer>
+    &copy; Olivia Wan, 2019
+    &middot; <a href="https://github.com/omwan/hbonds-web" target="_blank">GitHub</a>
+</footer>
 
 <script src="{{ url_for('static', filename='controller.js') }}"></script>
 

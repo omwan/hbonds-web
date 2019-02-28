@@ -13,10 +13,7 @@ $(document).ready(function () {
 
 
         //Fade in the Popup and add close button
-        $('#' + popID).fadeIn().css({'width': Number(popWidth)})
-            .prepend('<a href="#" class="close">' +
-                '<img src="/static/close.png" class="btn_close" title="Close Window" alt="Close" />' +
-                '</a>');
+        $('#' + popID).fadeIn().css({'width': Number(popWidth)});
 
         //Define margin for center alignment (vertical   horizontal) - we add 80px to the height/width to accomodate for the padding  and border width defined in the css
         var popMargTop = ($('#' + popID).height() + 80) / 2;

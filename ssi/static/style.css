@@ -1,17 +1,38 @@
 body {
     font-family: open sans, serif;
     font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
 }
 
 header {
-    display:flex;
-    max-width: 1200px;
-    margin: auto;
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.header-container {
+    display: flex;
     justify-content: space-between;
 }
 
 .app {
-    width:700px;
+    width: 750px;
+}
+
+.filter-table td {
+    padding-right: 10px;
 }
 
 .upload-form {
@@ -25,7 +46,7 @@ header {
 main {
     padding-top: 20px;
     max-width: 1200px;
-    margin: auto;
+    margin: 0 auto;
     text-align: center;
 }
 
@@ -56,50 +77,62 @@ main {
     font-size: 50px;
 }
 
+footer {
+    padding: 20px 0;
+    text-align: center;
+    margin-top: auto;
+    align-self: flex-end;
+    width: 100%;
+}
+
 /*
 popup css
 source: http://starious.tumblr.com/post/27923651360/tutorial-pop-up-menu
 */
 #fade {
-	display: none;
-	background: #000;
-	position: fixed;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	opacity: .80;
-	z-index: 9999;
+    display: none;
+    background: #000;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .80;
+    z-index: 9999;
 }
 
-.popup_block{
-	display: none;
-	background: #FFFFFF;
-	padding: 20px;
-	float: left;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	z-index: 99999;
+.popup_block {
+    display: none;
+    background: #FFFFFF;
+    padding: 20px;
+    float: left;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
 }
 
 img.btn_close {
-	float: right;
-	margin: -55px -55px 0 0;
+    float: right;
+    margin: -55px -55px 0 0;
 }
 
-*html #fade {
-	position: absolute;
+* html #fade {
+    position: absolute;
 }
 
-*html .popup_block {
-	position: absolute;
+* html .popup_block {
+    position: absolute;
 }
 
 .poplight {
-    position:fixed;
+    position: fixed;
     top: 10px;
     right: 10px;
-    font-size:20px;
-    color:#000;
+    font-size: 20px;
+    color: #000;
+}
+
+.popup_block h3 {
+    text-align: center;
 }

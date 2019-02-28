@@ -83,7 +83,9 @@ def build_full_scatter(filters_file):
         pdb=data["PDB"]
     ))
 
-    p = figure(tooltips="@pdb")
+    p = figure(tooltips="@pdb", title="Full data scatter")
+    p.xaxis.axis_label = "# Hydrogen Bonds / # Residues"
+    p.yaxis.axis_label = "Resolution (Angstroms)"
     p.scatter('x', 'y', source=source)
 
     return p
@@ -105,8 +107,10 @@ def build_means_scatter(data_file, bucket_size):
     upper = [y_val + e for y_val, e in zip(y, error)]
     lower = [y_val - e for y_val, e in zip(y, error)]
 
-    p = figure(y_range=[1, 4])
-    p.scatter(x, y)
+    p = figure(y_range=[1, 4], title="Mean values")
+    p.xaxis.axis_label = "# Hydrogen Bonds / # Residues"
+    p.yaxis.axis_label = "Resolution (Angstroms)"
+    # p.scatter(x, y)
 
     source = ColumnDataSource(data=dict(
         x=x,
@@ -119,5 +123,7 @@ def build_means_scatter(data_file, bucket_size):
         Whisker(source=source, base="x", upper="upper",
                 lower="lower", level="overlay")
     )
+
+    p.scatter('x', 'y', source=source)
 
     return p
