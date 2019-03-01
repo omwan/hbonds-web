@@ -67,7 +67,8 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     //numerical filter with an empty comparedValue field
     $scope.submitDisabled = function () {
         let emptyFilters = $scope.filters.filter(function (f) {
-            return f["numerical"] && !("comparedValue" in f);
+            return f["numerical"] &&
+                (!("comparedValue" in f) || f["comparedValue"] === "");
         }).length > 0;
         return $scope.filters.length === 0 || emptyFilters;
     };
