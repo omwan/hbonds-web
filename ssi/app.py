@@ -67,6 +67,11 @@ def chart():
 
         graph_name = file.split(".csv")[0]
 
+        # TODO: decide how/when to implement this
+        # if folder == app.config["UPLOAD_FOLDER"]:
+        #     os.remove(os.path.join(folder, file))
+        # os.remove(means_file)
+
     return render_template("index.html", name=graph_name,
                            scatter_div=scatter_div, scatter_script=scatter_script,
                            means_div=means_div, means_script=means_script)
