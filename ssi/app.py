@@ -24,7 +24,9 @@ def allowed_file(filename):
 
 def get_file():
     """
-    Retrieve a file from the request object.
+    Retrieve file with PDB IDs to filter in/out from upload form.
+
+    :return: filepath of file w/ PDB IDs.
     """
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
@@ -79,18 +81,36 @@ def chart():
 
 @app.route("/api/categoricals/<header>")
 def get_categorical_fields(header):
+    """
+    Get most common categorical fields from the given header, limited
+    by the given limit in request param.
+
+    :param header: PDB column to retrieve values for, eg: expressionHost
+    :return: list of categorical fields + counts sorted by descending count
+    """
     limit = request.args.get("limit")
     return jsonify(categorical_field.get_highest_counts(header, limit))
 
 
 @app.route("/api/categoricals/hetId")
 def get_het_ids():
+    """
+    Get most common het IDs from database. Can also be used for ligand IDs.
+    Limited by given limit in request params.
+
+    :return: list of het IDs + counts sorted by descending count
+    """
     limit = request.args.get("limit")
     return jsonify(moe.get_het_ids(limit))
 
 
 @app.route("/api/pdbfilter", methods=["POST"])
-def build_new_moe():
+def build_scatter_plot_data():
+    """
+    Build the scatter plot data from the filters in the request body.
+
+    :return: filename of generated scatter plot data file + filter params as map
+    """
     filters = json.loads(request.data)
     return jsonify({
         "filename": filter_moe.filter_moe(app.config["UPLOAD_FOLDER"], filters),
@@ -99,6 +119,12 @@ def build_new_moe():
 
 
 @app.route("/api/filters/<filename>")
-def download_filter(filename):
+def download_scatter_plot_data(filename):
+    """
+    Download the generated scatter plot data file.
+
+    :param filename: name of generated file
+    :return: generated scatter plot file
+    """
     folder = app.config["UPLOAD_FOLDER"]
     return send_from_directory(folder, filename, as_attachment=True)

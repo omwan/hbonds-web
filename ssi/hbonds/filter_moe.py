@@ -11,10 +11,23 @@ moe_headers = ["", "PDB", "Type", "cb.cb", "sc_.exp_avg", "hb_energy", "Residue.
 
 
 def add_quotes(string, quotation):
+    """
+    Helper to prepend + append quotations to a string.
+
+    :param string:      string to add quotes to
+    :param quotation:   type of quotation, eg: " or '
+    :return: string with quote characters added
+    """
     return quotation + string + quotation
 
 
 def categorical_operator(f):
+    """
+    Get string SQL equivalent of equals/not equals from a boolean.
+
+    :param f: boolean value
+    :return: string equivalent of boolean
+    """
     if f["filtered"]:
         return "!="
     else:
@@ -22,6 +35,12 @@ def categorical_operator(f):
 
 
 def build_filter_string(f):
+    """
+    Build portion of SQL where clause for the given filter.
+
+    :param f: filter object to build where clause section from
+    :return: SQL string
+    """
     header = add_quotes(f["header"], "\"")
     operator = f.get("comparator", categorical_operator(f))
     value = add_quotes(f["name"], "'") if "name" in f else f["comparedValue"]
@@ -31,6 +50,12 @@ def build_filter_string(f):
 
 
 def build_residue_filter_string(f):
+    """
+    Build SQL where clause for residue types to get matching substrings.
+
+    :param f: filter object with residue type to filter on.
+    :return: SQL string
+    """
     query_string = """
     (substring("Residue.1", 6, 3) = '{0}' 
     OR substring("Residue.2", 6, 3) = '{0}')
@@ -41,6 +66,11 @@ def build_residue_filter_string(f):
 
 
 def strip_trailing_bool(filter_string):
+    """
+    Strip trailing and/or from SQL where clause string if present.
+    :param filter_string: SQL where clause string
+    :return: SQL where clause string with trailing boolean stripped, if necessary
+    """
     string, last_word = filter_string.rsplit(" ", 1)
     if last_word == "and" or last_word == "or":
         return string
@@ -48,7 +78,28 @@ def strip_trailing_bool(filter_string):
         return filter_string
 
 
+def write_output(upload_folder, result):
+    filename = "filtered_pdbs_%s.csv" % int(time())
+    output = open(os.path.join(upload_folder, filename), "w+")
+
+    with output:
+        output_headers = ["PDB", "hbonds", "residues", "hbonds/residues", "resolution"]
+        writer = csv.DictWriter(output, fieldnames=output_headers)
+        writer.writeheader()
+        for row in result:
+            writer.writerow(dict(row))
+
+    return filename
+
+
 def filter_moe(upload_folder, filters):
+    """
+    Build SQL where clause from filters + make SQL query to generate scatter plot data file.
+
+    :param upload_folder: location to write output file to
+    :param filters: list of filter objects to generate query from
+    :return: filepath of scatter plot data file
+    """
     filter_strings = []
     count_residues = False
 
@@ -66,14 +117,4 @@ def filter_moe(upload_folder, filters):
     else:
         result = moe.get_residue_data_from_filters(final_string)
 
-    filename = "filtered_pdbs_%s.csv" % int(time())
-    output = open(os.path.join(upload_folder, filename), "w+")
-
-    with output:
-        output_headers = ["PDB", "hbonds", "residues", "hbonds/residues", "resolution"]
-        writer = csv.DictWriter(output, fieldnames=output_headers)
-        writer.writeheader()
-        for row in result:
-            writer.writerow(dict(row))
-
-    return filename
+    return write_output(upload_folder, result)
