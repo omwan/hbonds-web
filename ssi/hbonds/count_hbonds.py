@@ -12,8 +12,9 @@ def build_means_output(upload_folder, write_folder, output_file):
     Generate file w/ calculated means, standard deviations, etc. for
     hbond/residue ratio buckets.
 
-    :param upload_folder: folder to write files to
-    :param output_file: file w/ raw hbond data
+    :param upload_folder:   folder to retrieve uploaded file from
+    :param write_folder:    folder to write means file to
+    :param output_file:     file w/ raw hbond data
     :return: filepath to newly written means file
     """
     means_filepath = os.path.join(write_folder, "means_" + output_file)
@@ -95,7 +96,8 @@ def build_means_scatter(data_file, bucket_size):
     """
     Generate scatter plot from hbond means data.
 
-    :param data_file: path to means file
+    :param data_file:   path to means file
+    :param bucket_size: only display buckets with at least this many values
     :return: scatter plot
     """
     data = pandas.read_csv(data_file)
