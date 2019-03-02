@@ -27,25 +27,31 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
 
     //initalization function to populate categorical dropdowns
     var _init = function () {
-        categorical_apis.forEach(function (cat) {
-            $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
-                $scope.columns[cat] = response.data;
-                if (cat === "hetId") {
-                    $scope.columns["ligandId"] = response.data.map(function (val) {
-                        return {
-                            "header": "ligandId",
-                            "value": val["value"]
-                        }
-                    });
-                }
+        if (!window.sessionStorage.getItem("columns")) {
+            categorical_apis.forEach(function (cat) {
+                $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
+                    $scope.columns[cat] = response.data;
+                    if (cat === "hetId") {
+                        $scope.columns["ligandId"] = response.data.map(function (val) {
+                            return {
+                                "header": "ligandId",
+                                "value": val["value"]
+                            }
+                        });
+                    }
+                });
             });
-        });
 
-        categorical_statics.forEach(function (cat) {
-            $http.get("/static/" + cat + ".json").then(function (response) {
-                $scope.columns[cat] = response.data;
+            categorical_statics.forEach(function (cat) {
+                $http.get("/static/" + cat + ".json").then(function (response) {
+                    $scope.columns[cat] = response.data;
+                });
             });
-        });
+        } else {
+            $scope.columns = JSON.parse(window.sessionStorage.getItem("columns"));
+            $scope.filters = JSON.parse(window.sessionStorage.getItem("filters"));
+            $scope.filename = window.sessionStorage.getItem("filename");
+        }
     };
 
     //add another filter to the model
@@ -79,10 +85,14 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
             $scope.isLoading = false;
+            window.sessionStorage.setItem("filters", JSON.stringify($scope.filters));
+            window.sessionStorage.setItem("filename", $scope.filename);
+            if (!window.sessionStorage.getItem("columns")) {
+                window.sessionStorage.setItem("columns", JSON.stringify($scope.columns));
+            }
         }).finally(function (response) {
             $scope.isLoading = false;
         });
-        console.log($scope.filters);
     };
 
     //retrieve generated file from server + download in browser

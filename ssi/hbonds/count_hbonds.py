@@ -93,7 +93,7 @@ def build_full_scatter(filters_file):
 
 
 def build_means_scatter(data_file, bucket_size):
-    """"
+    """
     Generate scatter plot from hbond means data.
 
     :param data_file:   path to means file
