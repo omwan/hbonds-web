@@ -2,12 +2,25 @@ import json
 import os
 
 from bokeh.embed import components
+#
+from flask import Flask
 from flask import request, render_template, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
-from ssi import app
-from ssi.db import categorical_field, moe
+# from ssi import app
+from ssi.db import db, categorical_field, moe
 from ssi.hbonds import count_hbonds, filter_moe
+
+app = Flask(__name__)
+flask_env = os.getenv("FLASK_ENV")
+
+if flask_env == "development":
+    app.config.from_object("ssi.config.DevelopmentConfig")
+elif flask_env == "production":
+    app.config.from_object("ssi.config.ProductionConfig")
+
+db.init_app(app)
+print(app.config["SQLALCHEMY_DATABASE_URI"])
 
 
 def allowed_file(filename):

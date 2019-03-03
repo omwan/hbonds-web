@@ -12,8 +12,10 @@ moe/filtered*.csv
 moe/uploads/
 
 # Deploy files
-*.ini
-*.conf
+dist
+*egg.*
+*egg-info
+build
 
 # Mac files
 .DS_Store
