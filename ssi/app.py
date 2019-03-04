@@ -55,9 +55,7 @@ def get_scatter_data_file():
         if os.path.isfile(os.path.join(folder, file)):
             return file, folder
 
-    file = "output.csv"
-    folder = app.config["MOE_FOLDER"]
-    return file, folder
+    return "output.csv", app.config["MOE_FOLDER"]
 
 
 def silent_remove(filepath):
@@ -98,7 +96,8 @@ def chart():
             .build_full_scatter(folder, file, filters_filepath, exclude_filters)
         scatter_script, scatter_div = components(scatter_plot)
 
-        means_file = count_hbonds.build_means_output(folder, app.config["UPLOAD_FOLDER"], scatter_data)
+        means_file = count_hbonds \
+            .build_means_output(folder, app.config["UPLOAD_FOLDER"], scatter_data)
         means_plot = count_hbonds.build_means_scatter(means_file, bucket_size)
         means_script, means_div = components(means_plot)
 
@@ -173,8 +172,7 @@ def delete_files(filename):
     """
     folder = app.config["UPLOAD_FOLDER"]
     filepatterns = ["filtered_%s", "means_filtered_%s", "means_%s", "%s"]
-    for f in filepatterns:
-        silent_remove(os.path.join(folder, f % filename))
+    for pattern in filepatterns:
+        silent_remove(os.path.join(folder, pattern % filename))
 
     return '', 204
-
