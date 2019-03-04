@@ -60,6 +60,18 @@ def get_scatter_data_file():
     return file, folder
 
 
+def silent_remove(filepath):
+    """
+    Remove the file with the given filepath, do nothing if the file does not exist.
+
+    :param filepath: path to file to remove
+    """
+    try:
+        os.remove(filepath)
+    except OSError:
+        pass
+
+
 @app.route("/", methods=["GET", "POST"])
 def chart():
     """
@@ -91,6 +103,9 @@ def chart():
         means_script, means_div = components(means_plot)
 
         graph_name = file
+
+        if filters_filepath is not None:
+            silent_remove(filters_filepath)
 
     return render_template("index.html", name=graph_name,
                            scatter_div=scatter_div, scatter_script=scatter_script,
@@ -146,3 +161,20 @@ def download_scatter_plot_data(filename):
     """
     folder = app.config["UPLOAD_FOLDER"]
     return send_from_directory(folder, filename, as_attachment=True)
+
+
+@app.route("/api/filters/<filename>", methods=["DELETE"])
+def delete_files(filename):
+    """
+    Delete all generated files associated with the given scatter plot data file name.
+
+    :param filename: name of file to delete + its associated generated files
+    :return: no content response
+    """
+    folder = app.config["UPLOAD_FOLDER"]
+    filepatterns = ["filtered_%s", "means_filtered_%s", "means_%s", "%s"]
+    for f in filepatterns:
+        silent_remove(os.path.join(folder, f % filename))
+
+    return '', 204
+

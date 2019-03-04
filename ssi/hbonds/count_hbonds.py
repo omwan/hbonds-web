@@ -73,7 +73,7 @@ def filter_data(data_folder, data_file, pdb_filters_file, exclude_filters):
     """
     d_file = open(os.path.join(data_folder, data_file))
     pdb_filters = pandas.read_csv(os.path.join(data_folder, pdb_filters_file))
-    output_filename = os.path.join(data_folder, "filtered_data.csv")
+    output_filename = os.path.join(data_folder, "filtered_" + data_file)
     output = open(output_filename, "w+")
 
     with d_file, output:
@@ -90,7 +90,7 @@ def filter_data(data_folder, data_file, pdb_filters_file, exclude_filters):
             if exclude_filters and row["PDB"] not in pdbs:
                 writer.writerow(row)
 
-    return "filtered_data.csv"
+    return "filtered_" + data_file
 
 
 def build_full_scatter(data_folder, data_file, pdb_filters_file, exclude_filters):

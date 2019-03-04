@@ -25,6 +25,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     let categorical_apis = ["source", "expressionHost", "hetId"];
     let categorical_statics = ["residue", "Type"];
 
+    //set ligand ID values from het ID values
     let _setLigands = function (response) {
         $scope.columns["ligandId"] = response.data.map(function (val) {
             return {
@@ -34,6 +35,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
+    //retrieve filters + filename from cache if they exist
     let _setScopeFromCache = function () {
         if (window.sessionStorage.getItem("filters")) {
             $scope.filters = JSON.parse(window.sessionStorage.getItem("filters"));
@@ -112,6 +114,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
+    //save filters to cache
     $scope.cacheFilters = function () {
         window.sessionStorage.setItem("filters", JSON.stringify($scope.filters));
     };
@@ -121,12 +124,19 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         window.open("/api/filters/" + $scope.filename);
     };
 
+    //delete filters from cache + delete generated files from server
     $scope.clearFilters = function (event) {
-        console.log("hey");
-        $scope.filters = [];
-        $scope.filename = "";
-        window.sessionStorage.clear();
-        window.location.href = "/";
+        $scope.isLoading = true;
+        $http.delete("/api/filters/" + $scope.filename).then(function (response) {
+            console.log("files deleted");
+            console.log("hey");
+            $scope.filters = [];
+            $scope.filename = "";
+            window.sessionStorage.clear();
+            window.location.href = "/";
+        }).finally(function (response) {
+            $scope.isLoading = false;
+        });
     };
 
     _init();
