@@ -105,7 +105,7 @@
                     <td>
                         <select ng-model="filters[$index].name"
                                 ng-if="!filter.numerical"
-                                ng-init="filters[$index].name = columns[filter.header][0].value">
+                                ng-change="cacheFilters()" >
                             <option ng-repeat="col in columns[filter.header]"
                                     value="{{ col.value }}">
                                 {{ col.value }}
@@ -114,7 +114,7 @@
 
                         <span ng-if="filter.numerical">
                         <select ng-model="filters[$index].comparator"
-                                ng-init="filters[$index].comparator = '<'">
+                                ng-change="cacheFilters()">
                             <option value="<">&lt;</option>
                             <option value=">">&gt;</option>
                             <option value="=">=</option>
@@ -122,21 +122,24 @@
 
                         <input type="text"
                                ng-model="filters[$index].comparedValue"
-                               placeholder="value"/>
+                               placeholder="value"
+                               ng-change="cacheFilters()" />
                         </span>
                     </td>
 
                     <td>
                         <span ng-if="!filter.numerical">
                         <label>Filter out?</label>
-                        <input type="checkbox" ng-model="filters[$index].filtered"/>
+                        <input type="checkbox"
+                               ng-model="filters[$index].filtered"
+                               ng-change="cacheFilters()" />
                         </span>
                     </td>
 
                     <td>
                         <select ng-model="filters[$index].bool"
-                                ng-init="filters[$index].bool = 'and'"
-                                ng-if="filters.length > 1 && $index != filters.length - 1">
+                                ng-if="filters.length > 1 && $index != filters.length - 1"
+                                ng-change="cacheFilters()">
                             <option value="and">and</option>
                             <option value="or">or</option>
                         </select>
