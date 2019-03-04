@@ -22,7 +22,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
-def get_file():
+def get_filters_file():
     """
     Retrieve file with PDB IDs to filter in/out from upload form.
 
@@ -36,9 +36,40 @@ def get_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return app.config["UPLOAD_FOLDER"], filename
-    else:
-        return app.config["MOE_FOLDER"], "output.csv"
+            return os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
+    return None
+
+
+def get_scatter_data_file():
+    """
+    Retrieve file w/ scatter data from filename in request param, or retrieve
+    default scatter data if no request param found/given file name does not exist.
+
+    :return: filename and containing folder for scatter data
+    """
+    if request.args.get("file") is not None:
+        file = request.args.get("file")
+        folder = app.config["UPLOAD_FOLDER"]
+
+        if os.path.isfile(os.path.join(folder, file)):
+            return file, folder
+
+    file = "output.csv"
+    folder = app.config["MOE_FOLDER"]
+    return file, folder
+
+
+def silent_remove(filepath):
+    """
+    Remove the file with the given filepath, do nothing if the file does not exist.
+
+    :param filepath: path to file to remove
+    """
+    try:
+        os.remove(filepath)
+    except OSError:
+        pass
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -57,22 +88,24 @@ def chart():
     graph_name = None
 
     if request.method == "POST":
-        bucket_size = int(request.form.get("min-bucket-size", default=20))
-        folder, file = get_file()
+        file, folder = get_scatter_data_file()
 
-        scatter_plot = count_hbonds.build_full_scatter(os.path.join(folder, file))
+        bucket_size = int(request.form.get("min-bucket-size", default=20))
+        filters_filepath = get_filters_file()
+        exclude_filters = request.form.get("filter-pdbs") is not None
+
+        scatter_plot, scatter_data = count_hbonds \
+            .build_full_scatter(folder, file, filters_filepath, exclude_filters)
         scatter_script, scatter_div = components(scatter_plot)
 
-        means_file = count_hbonds.build_means_output(folder, app.config["UPLOAD_FOLDER"], file)
+        means_file = count_hbonds.build_means_output(folder, app.config["UPLOAD_FOLDER"], scatter_data)
         means_plot = count_hbonds.build_means_scatter(means_file, bucket_size)
         means_script, means_div = components(means_plot)
 
-        graph_name = file.split(".csv")[0]
+        graph_name = file
 
-        # TODO: decide how/when to implement this
-        # if folder == app.config["UPLOAD_FOLDER"]:
-        #     os.remove(os.path.join(folder, file))
-        # os.remove(means_file)
+        if filters_filepath is not None:
+            silent_remove(filters_filepath)
 
     return render_template("index.html", name=graph_name,
                            scatter_div=scatter_div, scatter_script=scatter_script,
@@ -128,3 +161,20 @@ def download_scatter_plot_data(filename):
     """
     folder = app.config["UPLOAD_FOLDER"]
     return send_from_directory(folder, filename, as_attachment=True)
+
+
+@app.route("/api/filters/<filename>", methods=["DELETE"])
+def delete_files(filename):
+    """
+    Delete all generated files associated with the given scatter plot data file name.
+
+    :param filename: name of file to delete + its associated generated files
+    :return: no content response
+    """
+    folder = app.config["UPLOAD_FOLDER"]
+    filepatterns = ["filtered_%s", "means_filtered_%s", "means_%s", "%s"]
+    for f in filepatterns:
+        silent_remove(os.path.join(folder, f % filename))
+
+    return '', 204
+

@@ -25,48 +25,69 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     let categorical_apis = ["source", "expressionHost", "hetId"];
     let categorical_statics = ["residue", "Type"];
 
-    //initalization function to populate categorical dropdowns
-    var _init = function () {
-        if (!window.sessionStorage.getItem("columns")) {
-            categorical_apis.forEach(function (cat) {
-                $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
-                    $scope.columns[cat] = response.data;
-                    if (cat === "hetId") {
-                        $scope.columns["ligandId"] = response.data.map(function (val) {
-                            return {
-                                "header": "ligandId",
-                                "value": val["value"]
-                            }
-                        });
-                    }
-                });
-            });
+    //set ligand ID values from het ID values
+    let _setLigands = function (response) {
+        $scope.columns["ligandId"] = response.data.map(function (val) {
+            return {
+                "header": "ligandId",
+                "value": val["value"]
+            }
+        });
+    };
 
-            categorical_statics.forEach(function (cat) {
-                $http.get("/static/" + cat + ".json").then(function (response) {
-                    $scope.columns[cat] = response.data;
-                });
-            });
-        } else {
-            $scope.columns = JSON.parse(window.sessionStorage.getItem("columns"));
+    //retrieve filters + filename from cache if they exist
+    let _setScopeFromCache = function () {
+        if (window.sessionStorage.getItem("filters")) {
             $scope.filters = JSON.parse(window.sessionStorage.getItem("filters"));
+        }
+        if (window.sessionStorage.getItem("filename")) {
             $scope.filename = window.sessionStorage.getItem("filename");
         }
     };
 
+    //initalization function to populate categorical dropdowns
+    let _init = function () {
+        categorical_apis.forEach(function (cat) {
+            $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
+                $scope.columns[cat] = response.data;
+                if (cat === "hetId") {
+                    _setLigands(response);
+                }
+            });
+        });
+
+        categorical_statics.forEach(function (cat) {
+            $http.get("/static/" + cat + ".json").then(function (response) {
+                $scope.columns[cat] = response.data;
+            });
+        });
+
+        _setScopeFromCache();
+    };
+
     //add another filter to the model
     $scope.addFilter = function (event) {
-        $scope.filters.push({
+        let newFilter = {
             header: $scope.header,
             label: $scope.labels[$scope.header],
             filtered: false,
-            numerical: numericals.indexOf($scope.header) >= 0
-        });
+            numerical: numericals.indexOf($scope.header) >= 0,
+            bool: "and"
+        };
+
+        if (!newFilter["numerical"]) {
+            newFilter["name"] = $scope.columns[newFilter["header"]][0].value
+        } else {
+            newFilter["comparator"] = "<";
+        }
+        $scope.filters.push(newFilter);
+        $scope.cacheFilters();
     };
 
     //delete a filter from the model
     $scope.deleteFilter = function (event, index) {
         $scope.filters.splice(index, 1);
+        $scope.cacheFilters();
     };
 
     //disable the submit button if there are no filters or there is a
@@ -87,17 +108,35 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
             $scope.isLoading = false;
             window.sessionStorage.setItem("filters", JSON.stringify($scope.filters));
             window.sessionStorage.setItem("filename", $scope.filename);
-            if (!window.sessionStorage.getItem("columns")) {
-                window.sessionStorage.setItem("columns", JSON.stringify($scope.columns));
-            }
+            window.location.href = "?file=" + response.data.filename;
         }).finally(function (response) {
             $scope.isLoading = false;
         });
     };
 
+    //save filters to cache
+    $scope.cacheFilters = function () {
+        window.sessionStorage.setItem("filters", JSON.stringify($scope.filters));
+    };
+
     //retrieve generated file from server + download in browser
     $scope.downloadFilter = function (event) {
         window.open("/api/filters/" + $scope.filename);
+    };
+
+    //delete filters from cache + delete generated files from server
+    $scope.clearFilters = function (event) {
+        $scope.isLoading = true;
+        $http.delete("/api/filters/" + $scope.filename).then(function (response) {
+            console.log("files deleted");
+            console.log("hey");
+            $scope.filters = [];
+            $scope.filename = "";
+            window.sessionStorage.clear();
+            window.location.href = "/";
+        }).finally(function (response) {
+            $scope.isLoading = false;
+        });
     };
 
     _init();

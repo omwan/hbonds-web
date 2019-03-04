@@ -1,6 +1,6 @@
 body {
     font-family: open sans, serif;
-    font-size: 15px;
+    font-size: 13px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -110,6 +110,7 @@ source: http://starious.tumblr.com/post/27923651360/tutorial-pop-up-menu
     top: 50%;
     left: 50%;
     z-index: 99999;
+    font-size:15px;
 }
 
 img.btn_close {

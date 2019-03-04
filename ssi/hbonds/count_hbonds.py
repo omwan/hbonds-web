@@ -61,14 +61,52 @@ def build_means_output(upload_folder, write_folder, output_file):
     return means_filepath
 
 
-def build_full_scatter(filters_file):
+def filter_data(data_folder, data_file, pdb_filters_file, exclude_filters):
+    """
+    Filter scatter plot data on a list of PDB IDs.
+
+    :param data_folder:         folder containing output file
+    :param data_file:           name of output file
+    :param pdb_filters_file:    file containing PDB IDs to filter in/out
+    :param exclude_filters:     whether or not to filter in/out given PDB IDs
+    :return: name of filtered file
+    """
+    d_file = open(os.path.join(data_folder, data_file))
+    pdb_filters = pandas.read_csv(os.path.join(data_folder, pdb_filters_file))
+    output_filename = os.path.join(data_folder, "filtered_" + data_file)
+    output = open(output_filename, "w+")
+
+    with d_file, output:
+        reader = csv.DictReader(d_file)
+        writer = csv.DictWriter(output, fieldnames=["PDB", "hbonds", "residues",
+                                                    "hbonds/residues", "resolution"])
+        writer.writeheader()
+        pdbs = set(pdb_filters["PDB"])
+
+        for i, row in enumerate(reader):
+            if not exclude_filters and row["PDB"] in pdbs:
+                writer.writerow(row)
+
+            if exclude_filters and row["PDB"] not in pdbs:
+                writer.writerow(row)
+
+    return "filtered_" + data_file
+
+
+def build_full_scatter(data_folder, data_file, pdb_filters_file, exclude_filters):
     """
     Generate scatter plot from full hbond count data.
 
-    :param filters_file: path to output file
-    :return: scatter plot
+    :param data_folder:         folder containing output file
+    :param data_file:           name of output file
+    :param pdb_filters_file:    path to file w/ PDB IDs to filter in/out
+    :param exclude_filters:     whether or not to filter in/out given PDB IDs
+    :return: scatter plot and name of file w/ data
     """
-    data = pandas.read_csv(filters_file)
+    if pdb_filters_file is not None:
+        data_file = filter_data(data_folder, data_file, pdb_filters_file, exclude_filters)
+
+    data = pandas.read_csv(os.path.join(data_folder, data_file))
 
     # filter out peptides and high-res species
     data = data[data["residues"] > 50]
@@ -89,7 +127,7 @@ def build_full_scatter(filters_file):
     p.yaxis.axis_label = "Resolution (Angstroms)"
     p.scatter('x', 'y', source=source)
 
-    return p
+    return p, data_file
 
 
 def build_means_scatter(data_file, bucket_size):
