@@ -47,17 +47,26 @@
 
     <h3>How to use</h3>
     <p>
+        To view full dataset graphs, clear any existing filters with "clear filters" button on the left, then click
+        "Build graphs" button on the right
+    </p>
+    <p>
+        To build custom filter for data based on PDB attributes:
+    </p>
     <ol>
-        <li>Select filter type from "Header type" menu and click "Add filter" button</li>
+        <li>Select filter type from "Header type" dropdown menu on the left</li>
         <li>Select filter value from dropdown if present, or select operator and comparison value</li>
         <li>Repeat as needed to add more filter criteria</li>
         <li>Toggle the boolean operator (and vs or) for multiple criteria</li>
         <li>To remove a filter, click the "Delete filter" button to the right of the filter</li>
-        <li>When all filters are selected, click the "Submit" button to generate scatter plot data</li>
-        <li>Click "Download" button to download .csv file with data</li>
-        <li>Upload downloaded file to input labeled "Choose file"</li>
-        <li>Enter minimum bucket size for means graph</li>
-        <li>Click "Submit" button to generate graphs</li>
+        <li>When all filters are selected, click the "Submit" button to generate scatter plot data, which can be
+            downloaded by clicking the "download" button
+        </li>
+        <li>The filters can be cleared by clicking the "clear filter" button</li>
+        <li>Click the "Build graphs" button on the right to generate graphs</li>
+        <li>The graphs may be customized by optionally entering a minimum bucket size, and/or by uploading a list of PDB
+            IDs to filter in/out
+        </li>
     </ol>
     </p>
     <p>
@@ -105,7 +114,7 @@
                     <td>
                         <select ng-model="filters[$index].name"
                                 ng-if="!filter.numerical"
-                                ng-change="cacheFilters()" >
+                                ng-change="cacheFilters()">
                             <option ng-repeat="col in columns[filter.header]"
                                     value="{{ col.value }}">
                                 {{ col.value }}
@@ -123,7 +132,7 @@
                         <input type="text"
                                ng-model="filters[$index].comparedValue"
                                placeholder="value"
-                               ng-change="cacheFilters()" />
+                               ng-change="cacheFilters()"/>
                         </span>
                     </td>
 
@@ -132,7 +141,7 @@
                         <label>Filter out?</label>
                         <input type="checkbox"
                                ng-model="filters[$index].filtered"
-                               ng-change="cacheFilters()" />
+                               ng-change="cacheFilters()"/>
                         </span>
                     </td>
 
@@ -170,15 +179,11 @@
         <!--upload form-->
         <section class="upload-form">
 
-            <h2>Upload plot data</h2>
+            <h2>Generate graphs</h2>
             <form method=post enctype=multipart/form-data>
                 <div class="form-row">
+                    <label>Upload PDB IDs</label>
                     <input type=file name=file>
-                </div>
-
-                <div class="form-row">
-                    <label>Minimum bucket size</label>
-                    <input type="number" name="min-bucket-size" min=0 value=20>
                 </div>
 
                 <div class="form-row">
@@ -187,7 +192,12 @@
                 </div>
 
                 <div class="form-row">
-                    <input type=submit value=Submit>
+                    <label>Minimum bucket size</label>
+                    <input type="number" name="min-bucket-size" min=0 value=20>
+                </div>
+
+                <div class="form-row">
+                    <input type=submit value="Build graphs">
                 </div>
             </form>
 
