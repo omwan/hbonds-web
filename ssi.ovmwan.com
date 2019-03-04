@@ -3,6 +3,7 @@ server {
     listen [::]:80;
 
     server_name ssi.ovmwan.com;
+    client_max_body_size 300M;
 
     location / {
         proxy_pass http://localhost:5000;
