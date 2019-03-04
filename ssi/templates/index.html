@@ -158,6 +158,7 @@
             <div ng-if="filename">
                 <div>{{ filename }}</div>
                 <button ng-click="downloadFilter($event)">download</button>
+                <button ng-click="clearFilters($event)">clear filter</button>
             </div>
         </span>
 
@@ -178,6 +179,11 @@
                 <div class="form-row">
                     <label>Minimum bucket size</label>
                     <input type="number" name="min-bucket-size" min=0 value=20>
+                </div>
+
+                <div class="form-row">
+                    <label>Filter out PDBs?</label>
+                    <input type="checkbox" name="filter-pdbs">
                 </div>
 
                 <div class="form-row">

@@ -25,7 +25,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     let categorical_apis = ["source", "expressionHost", "hetId"];
     let categorical_statics = ["residue", "Type"];
 
-    let _setLigands = function () {
+    let _setLigands = function (response) {
         $scope.columns["ligandId"] = response.data.map(function (val) {
             return {
                 "header": "ligandId",
@@ -49,7 +49,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
             $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
                 $scope.columns[cat] = response.data;
                 if (cat === "hetId") {
-                    _setLigands();
+                    _setLigands(response);
                 }
             });
         });
@@ -119,6 +119,14 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     //retrieve generated file from server + download in browser
     $scope.downloadFilter = function (event) {
         window.open("/api/filters/" + $scope.filename);
+    };
+
+    $scope.clearFilters = function (event) {
+        console.log("hey");
+        $scope.filters = [];
+        $scope.filename = "";
+        window.sessionStorage.clear();
+        window.location.href = "/";
     };
 
     _init();

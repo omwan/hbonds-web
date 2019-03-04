@@ -12,6 +12,8 @@ moe/filtered*.csv
 moe/uploads/
 
 # Deploy files
+*.ini
+*.conf
 dist
 *egg.*
 *egg-info

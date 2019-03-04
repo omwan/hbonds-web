@@ -79,6 +79,13 @@ def strip_trailing_bool(filter_string):
 
 
 def write_output(upload_folder, result):
+    """
+    Write SQL query result to a CSV file.
+
+    :param upload_folder:   location to write file to
+    :param result:          SQL query result
+    :return: name of generated file
+    """
     filename = "filtered_pdbs_%s.csv" % int(time())
     output = open(os.path.join(upload_folder, filename), "w+")
 
@@ -98,7 +105,7 @@ def filter_moe(upload_folder, filters):
 
     :param upload_folder: location to write output file to
     :param filters: list of filter objects to generate query from
-    :return: filepath of scatter plot data file
+    :return: name of scatter plot file
     """
     filter_strings = []
     count_residues = False
