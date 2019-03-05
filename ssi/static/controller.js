@@ -35,13 +35,19 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         });
     };
 
-    //retrieve filters + filename from cache if they exist
+    //retrieve filters + filename/count from cache if they exist
     let _setScopeFromCache = function () {
         if (window.sessionStorage.getItem("filters")) {
             $scope.filters = JSON.parse(window.sessionStorage.getItem("filters"));
         }
         if (window.sessionStorage.getItem("filename")) {
             $scope.filename = window.sessionStorage.getItem("filename");
+        }
+        if (window.sessionStorage.getItem("count")) {
+            $scope.count = window.sessionStorage.getItem("count");
+        }
+        if (window.sessionStorage.getItem("query")) {
+            $scope.query = window.sessionStorage.getItem("query");
         }
     };
 
@@ -105,9 +111,13 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         $scope.isLoading = true;
         $http.post("/api/pdbfilter", $scope.filters).then(function (response) {
             $scope.filename = response.data.filename;
+            $scope.count = response.data.count;
+            $scope.query = response.data.query;
             $scope.isLoading = false;
             window.sessionStorage.setItem("filters", JSON.stringify($scope.filters));
             window.sessionStorage.setItem("filename", $scope.filename);
+            window.sessionStorage.setItem("count", $scope.count);
+            window.sessionStorage.setItem("query", $scope.query);
             window.location.href = "?file=" + response.data.filename;
         }).finally(function (response) {
             $scope.isLoading = false;
@@ -128,8 +138,6 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.clearFilters = function (event) {
         $scope.isLoading = true;
         $http.delete("/api/filters/" + $scope.filename).then(function (response) {
-            console.log("files deleted");
-            console.log("hey");
             $scope.filters = [];
             $scope.filename = "";
             window.sessionStorage.clear();

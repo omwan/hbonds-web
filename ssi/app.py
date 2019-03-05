@@ -144,9 +144,12 @@ def build_scatter_plot_data():
     :return: filename of generated scatter plot data file + filter params as map
     """
     filters = json.loads(request.data)
+    filename, row_count, query = filter_moe.filter_moe(app.config["UPLOAD_FOLDER"], filters)
     return jsonify({
-        "filename": filter_moe.filter_moe(app.config["UPLOAD_FOLDER"], filters),
-        "params": filters
+        "filename": filename,
+        "params": filters,
+        "count": row_count,
+        "query": query
     })
 
 

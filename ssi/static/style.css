@@ -127,6 +127,10 @@ img.btn_close {
 }
 
 .poplight {
+    text-decoration:none;
+}
+
+#info_poplight {
     position: fixed;
     top: 10px;
     right: 10px;

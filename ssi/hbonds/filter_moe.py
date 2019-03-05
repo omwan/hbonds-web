@@ -109,10 +109,13 @@ def write_output(upload_folder, result):
         output_headers = ["PDB", "hbonds", "residues", "hbonds/residues", "resolution"]
         writer = csv.DictWriter(output, fieldnames=output_headers)
         writer.writeheader()
+
+        row_count = 0
         for row in result:
             writer.writerow(dict(row))
+            row_count += 1
 
-    return filename
+    return filename, row_count
 
 
 def filter_moe(upload_folder, filters):
@@ -143,4 +146,5 @@ def filter_moe(upload_folder, filters):
     else:
         result = moe.get_residue_data_from_filters(final_string)
 
-    return write_output(upload_folder, result)
+    filename, row_count = write_output(upload_folder, result)
+    return filename, row_count, final_string
