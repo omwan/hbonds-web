@@ -35,11 +35,11 @@
 <body>
 
 <!--popup-->
-<a href="#?w=500" rel="popup_name" class="poplight">
+<a href="#?w=500" rel="info_popup" class="poplight" id="info_poplight">
     <i class="fa fa-info-circle"></i>
 </a>
 
-<div id="popup_name" class="popup_block">
+<div id="info_popup" class="popup_block">
 
     <a href="#" class="close">
         <img src="/static/close.png" class="btn_close" title="Close Window" alt="Close"/>
@@ -164,12 +164,27 @@
             </div>
 
                 <!--download file button-->
-            <div ng-if="filename">
-                <div>{{ filename }}</div>
+            <div ng-hide="!filename">
+                <div>{{ filename }}, {{ count }} PDB analyzed</div>
                 <button ng-click="downloadFilter($event)">download</button>
+                <a href="#?w=500" rel="query_popup" class="poplight">
+                    <button>view query</button>
+                </a>
                 <button ng-click="clearFilters($event)">clear filter</button>
             </div>
-        </span>
+            </span>
+
+
+            <div id="query_popup" class="popup_block">
+
+                <a href="#" class="close">
+                    <img src="/static/close.png" class="btn_close" title="Close Window" alt="Close"/>
+                </a>
+
+                <pre>{{query}}</pre>
+
+                <a class="close" href="javascript:void(0)">close</a>
+            </div>
 
         </section>
 
