@@ -129,7 +129,7 @@
                             <option value="=">=</option>
                         </select>
 
-                        <input type="text"
+                        <input type="number"
                                ng-model="filters[$index].comparedValue"
                                placeholder="value"
                                ng-change="cacheFilters()"/>
@@ -208,7 +208,7 @@
 
                 <div class="form-row">
                     <label>Minimum bucket size</label>
-                    <input type="number" name="min-bucket-size" min=0 value=20>
+                    <input type="number" name="min-bucket-size" min=0 value=20 step=1>
                 </div>
 
                 <div class="form-row">

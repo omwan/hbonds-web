@@ -43,7 +43,7 @@ def build_filter_string(f, or_clause):
     """
     header = add_quotes(f["header"], "\"")
     operator = f.get("comparator", categorical_operator(f))
-    value = add_quotes(f["name"], "'") if "name" in f else f["comparedValue"]
+    value = add_quotes(f["name"], "'") if "name" in f else str(f["comparedValue"])
     bool = f.get("bool", "")
     strings = [header, operator, value, bool]
 
