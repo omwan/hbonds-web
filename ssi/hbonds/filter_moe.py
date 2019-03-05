@@ -34,7 +34,7 @@ def categorical_operator(f):
         return "="
 
 
-def build_filter_string(f):
+def build_filter_string(f, or_clause):
     """
     Build portion of SQL where clause for the given filter.
 
@@ -45,11 +45,19 @@ def build_filter_string(f):
     operator = f.get("comparator", categorical_operator(f))
     value = add_quotes(f["name"], "'") if "name" in f else f["comparedValue"]
     bool = f.get("bool", "")
+    strings = [header, operator, value, bool]
 
-    return " ".join([header, operator, value, bool])
+    if not or_clause and bool == "or":
+        strings = ["("] + strings
+        or_clause = True
+    elif or_clause and bool == "and":
+        strings.insert(len(strings) - 1, ")")
+        or_clause = False
+
+    return " ".join(strings), or_clause
 
 
-def build_residue_filter_string(f):
+def build_residue_filter_string(f, or_clause):
     """
     Build SQL where clause for residue types to get matching substrings.
 
@@ -61,8 +69,16 @@ def build_residue_filter_string(f):
     OR substring("Residue.2", 6, 3) = '{0}')
     """
     bool = f.get("bool", "")
+    strings = [query_string.format(f["name"]), bool]
 
-    return " ".join([query_string.format(f["name"]), bool])
+    if not or_clause and bool == "or":
+        strings = ["("] + strings
+        or_clause = True
+    elif or_clause and bool == "and":
+        strings.insert(len(strings) - 1, ")")
+        or_clause = False
+
+    return " ".join(strings), or_clause
 
 
 def strip_trailing_bool(filter_string):
@@ -110,12 +126,15 @@ def filter_moe(upload_folder, filters):
     filter_strings = []
     count_residues = False
 
+    or_clause = False
     for f in filters:
         if f["header"] == "residue":
             count_residues = True
-            filter_strings.append(build_residue_filter_string(f))
+            string, or_clause = build_residue_filter_string(f, or_clause)
+            filter_strings.append(string)
         else:
-            filter_strings.append(build_filter_string(f))
+            string, or_clause = build_filter_string(f, or_clause)
+            filter_strings.append(string)
 
     final_string = strip_trailing_bool(" ".join(filter_strings))
 

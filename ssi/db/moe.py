@@ -82,6 +82,7 @@ def get_data_from_filters(filter_string):
         "refinementResolution",
         "chainLength"
     """
+    print(query_string % filter_string)
     return db.engine.execute(query_string % filter_string)
 
 
@@ -105,6 +106,7 @@ def get_residue_data_from_filters(filter_string):
         "refinementResolution",
         "chainLength";
     """
+    print(query_string % filter_string)
     return db.engine.execute(query_string % filter_string)
 
 
