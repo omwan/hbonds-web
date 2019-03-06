@@ -96,8 +96,11 @@ def chart():
             .build_full_scatter(folder, file, filters_filepath, exclude_filters)
         scatter_script, scatter_div = components(scatter_plot)
 
-        means_file = count_hbonds \
-            .build_means_output(folder, app.config["UPLOAD_FOLDER"], scatter_data)
+        if file != "output.csv":
+            means_file = count_hbonds \
+                .build_means_output(folder, app.config["UPLOAD_FOLDER"], scatter_data)
+        else:
+            means_file = os.path.join(app.config["MOE_FOLDER"], "means_output.csv")
         means_plot = count_hbonds.build_means_scatter(means_file, bucket_size)
         means_script, means_div = components(means_plot)
 
@@ -165,17 +168,18 @@ def download_scatter_plot_data(filename):
     return send_from_directory(folder, filename, as_attachment=True)
 
 
-@app.route("/api/filters/<filename>", methods=["DELETE"])
-def delete_files(filename):
+@app.route("/api/filters", methods=["DELETE"])
+def delete_files():
     """
-    Delete all generated files associated with the given scatter plot data file name.
+    Delete all generated files in the upload folder.
 
-    :param filename: name of file to delete + its associated generated files
     :return: no content response
     """
     folder = app.config["UPLOAD_FOLDER"]
-    filepatterns = ["filtered_%s", "means_filtered_%s", "means_%s", "%s"]
-    for pattern in filepatterns:
-        silent_remove(os.path.join(folder, pattern % filename))
+    count = 0
+    for file in os.listdir(folder):
+        silent_remove(os.path.join(folder, file))
+        count += 1
 
+    print("%s files removed" % count)
     return '', 204

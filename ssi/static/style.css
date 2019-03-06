@@ -110,7 +110,7 @@ source: http://starious.tumblr.com/post/27923651360/tutorial-pop-up-menu
     top: 50%;
     left: 50%;
     z-index: 99999;
-    font-size:15px;
+    font-size: 15px;
 }
 
 img.btn_close {
@@ -127,7 +127,7 @@ img.btn_close {
 }
 
 .poplight {
-    text-decoration:none;
+    text-decoration: none;
 }
 
 #info_poplight {
