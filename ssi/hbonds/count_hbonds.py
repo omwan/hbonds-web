@@ -122,7 +122,7 @@ def build_full_scatter(data_folder, data_file, pdb_filters_file, exclude_filters
         pdb=data["PDB"]
     ))
 
-    p = figure(tooltips="@pdb", title="Full data scatter")
+    p = figure(x_range=[0, 0.2], tooltips="@pdb", title="Full data scatter")
     p.xaxis.axis_label = "# Hydrogen Bonds / # Residues"
     p.yaxis.axis_label = "Resolution (Angstroms)"
     p.scatter('x', 'y', source=source)
@@ -150,7 +150,6 @@ def build_means_scatter(data_file, bucket_size):
     p = figure(y_range=[1, 4], title="Mean values")
     p.xaxis.axis_label = "# Hydrogen Bonds / # Residues"
     p.yaxis.axis_label = "Resolution (Angstroms)"
-    # p.scatter(x, y)
 
     source = ColumnDataSource(data=dict(
         x=x,

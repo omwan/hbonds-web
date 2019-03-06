@@ -137,7 +137,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     //delete filters from cache + delete generated files from server
     $scope.clearFilters = function (event) {
         $scope.isLoading = true;
-        $http.delete("/api/filters/" + $scope.filename).then(function (response) {
+        $http.delete("/api/filters").then(function (response) {
             $scope.filters = [];
             $scope.filename = "";
             window.sessionStorage.clear();
