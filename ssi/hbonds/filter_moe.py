@@ -106,7 +106,7 @@ def write_output(upload_folder, result):
     output = open(os.path.join(upload_folder, filename), "w+")
 
     with output:
-        output_headers = ["PDB", "hbonds", "residues", "hbonds/residues", "resolution"]
+        output_headers = ["PDB", "hbonds", "residues", "hbonds/residues", "bfactor"]
         writer = csv.DictWriter(output, fieldnames=output_headers)
         writer.writeheader()
 

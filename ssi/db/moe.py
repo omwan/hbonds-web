@@ -72,14 +72,15 @@ def get_data_from_filters(filter_string):
         count(DISTINCT "cb.cb") as "hbonds",
         "chainLength" as "residues",
         count(DISTINCT "cb.cb") / CAST("chainLength" AS FLOAT) AS "hbonds/residues",
-        "refinementResolution" as "resolution"
+        "averageBFactor" as "bfactor"
     FROM
         moe
     WHERE
         %s
+        and "averageBFactor" is not null
     GROUP BY
         "PDB",
-        "refinementResolution",
+        "averageBFactor",
         "chainLength"
     """
     # TODO remove this
@@ -97,14 +98,15 @@ def get_residue_data_from_filters(filter_string):
         count(DISTINCT ("PDB", "cb.cb", 
             substring("Residue.1", 6, 3), substring("Residue.2", 6, 3))) 
                 / CAST("chainLength" AS FLOAT) AS "hbonds/residues",
-        "refinementResolution" AS "resolution"
+        "averageBFactor" as "bfactor"
     FROM
         moe
     WHERE 
         %s
+        and "averageBFactor" is not null
     GROUP BY
         "PDB",
-        "refinementResolution",
+        "averageBFactor",
         "chainLength";
     """
     # TODO remove this

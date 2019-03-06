@@ -55,7 +55,7 @@ def get_scatter_data_file():
         if os.path.isfile(os.path.join(folder, file)):
             return file, folder
 
-    return "output.csv", app.config["MOE_FOLDER"]
+    return "output_bfactor.csv", app.config["MOE_FOLDER"]
 
 
 def silent_remove(filepath):

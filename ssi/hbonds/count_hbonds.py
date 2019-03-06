@@ -31,23 +31,23 @@ def build_means_output(upload_folder, write_folder, output_file):
         buckets = {}
 
         for i, row in enumerate(reader):
-            if row["resolution"] == "" or float(row["residues"]) <= 50 or float(row["resolution"]) <= 1:
+            if row["bfactor"] == "" or float(row["residues"]) <= 50 or float(row["bfactor"]) <= 1:
                 continue
 
             headers = {
                 "hbond_residue": round(float(row["hbonds/residues"]), 3),
             }
 
-            resolution = float(row["resolution"])
+            bfactor = float(row["bfactor"])
 
             for key, value in headers.items():
                 pair = (key, float(value))
                 if pair in buckets:
-                    resolutions = buckets[pair]
-                    resolutions.append(resolution)
-                    buckets[pair] = resolutions
+                    bfactors = buckets[pair]
+                    bfactors.append(bfactor)
+                    buckets[pair] = bfactors
                 else:
-                    buckets[pair] = [resolution]
+                    buckets[pair] = [bfactor]
 
         for key in sorted(buckets.keys()):
             writer.writerow({
@@ -79,7 +79,7 @@ def filter_data(data_folder, data_file, pdb_filters_file, exclude_filters):
     with d_file, output:
         reader = csv.DictReader(d_file)
         writer = csv.DictWriter(output, fieldnames=["PDB", "hbonds", "residues",
-                                                    "hbonds/residues", "resolution"])
+                                                    "hbonds/residues", "bfactor"])
         writer.writeheader()
         pdbs = set(pdb_filters["PDB"])
 
@@ -110,11 +110,11 @@ def build_full_scatter(data_folder, data_file, pdb_filters_file, exclude_filters
 
     # filter out peptides and high-res species
     data = data[data["residues"] > 50]
-    data = data[data["resolution"] > 1]
-    data = data[data["resolution"] < 4]
+    # data = data[data["bfactor"] > 1]
+    # data = data[data["bfactor"] < 4]
 
     x = data["hbonds/residues"]
-    y = data["resolution"]
+    y = data["bfactor"]
 
     source = ColumnDataSource(data=dict(
         x=x,
@@ -124,7 +124,7 @@ def build_full_scatter(data_folder, data_file, pdb_filters_file, exclude_filters
 
     p = figure(tooltips="@pdb", title="Full data scatter")
     p.xaxis.axis_label = "# Hydrogen Bonds / # Residues"
-    p.yaxis.axis_label = "Resolution (Angstroms)"
+    p.yaxis.axis_label = "bfactor (Angstroms)"
     p.scatter('x', 'y', source=source)
 
     return p, data_file
@@ -147,9 +147,9 @@ def build_means_scatter(data_file, bucket_size):
     upper = [y_val + e for y_val, e in zip(y, error)]
     lower = [y_val - e for y_val, e in zip(y, error)]
 
-    p = figure(y_range=[1, 4], title="Mean values")
+    p = figure(x_range=[0, 0.1], y_range=[0, 100], title="Mean values")
     p.xaxis.axis_label = "# Hydrogen Bonds / # Residues"
-    p.yaxis.axis_label = "Resolution (Angstroms)"
+    p.yaxis.axis_label = "bfactor (Angstroms^2)"
     # p.scatter(x, y)
 
     source = ColumnDataSource(data=dict(
