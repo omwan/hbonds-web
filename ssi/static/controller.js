@@ -49,24 +49,29 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         if (window.sessionStorage.getItem("query")) {
             $scope.query = window.sessionStorage.getItem("query");
         }
+        if (window.sessionStorage.getItem("columns")) {
+            $scope.columns = JSON.parse(window.sessionStorage.getItem("columns"));
+        }
     };
 
     //initalization function to populate categorical dropdowns
     let _init = function () {
-        categorical_apis.forEach(function (cat) {
-            $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
-                $scope.columns[cat] = response.data;
-                if (cat === "hetId") {
-                    _setLigands(response);
-                }
+        if (!window.sessionStorage.getItem("columns")) {
+            categorical_apis.forEach(function (cat) {
+                $http.get("/api/categoricals/" + cat + "?limit=100").then(function (response) {
+                    $scope.columns[cat] = response.data;
+                    if (cat === "hetId") {
+                        _setLigands(response);
+                    }
+                });
             });
-        });
 
-        categorical_statics.forEach(function (cat) {
-            $http.get("/static/" + cat + ".json").then(function (response) {
-                $scope.columns[cat] = response.data;
+            categorical_statics.forEach(function (cat) {
+                $http.get("/static/" + cat + ".json").then(function (response) {
+                    $scope.columns[cat] = response.data;
+                });
             });
-        });
+        }
 
         _setScopeFromCache();
     };
@@ -118,6 +123,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
             window.sessionStorage.setItem("filename", $scope.filename);
             window.sessionStorage.setItem("count", $scope.count);
             window.sessionStorage.setItem("query", $scope.query);
+            window.sessionStorage.setItem("columns", JSON.stringify($scope.columns));
             window.location.href = "?file=" + response.data.filename;
         }).finally(function (response) {
             $scope.isLoading = false;
