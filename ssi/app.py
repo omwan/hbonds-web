@@ -96,11 +96,11 @@ def chart():
             .build_full_scatter(folder, file, filters_filepath, exclude_filters)
         scatter_script, scatter_div = components(scatter_plot)
 
-        if file != "output.csv":
+        if file != "output_bfactor.csv":
             means_file = count_hbonds \
                 .build_means_output(folder, app.config["UPLOAD_FOLDER"], scatter_data)
         else:
-            means_file = os.path.join(app.config["MOE_FOLDER"], "means_output.csv")
+            means_file = os.path.join(app.config["MOE_FOLDER"], "means_output_bfactor.csv")
         means_plot = count_hbonds.build_means_scatter(means_file, bucket_size)
         means_script, means_div = components(means_plot)
 

@@ -82,6 +82,7 @@ def filter_data(data_folder, data_file, pdb_filters_file, exclude_filters):
                                                     "hbonds/residues", "bfactor"])
         writer.writeheader()
         pdbs = set(pdb_filters["PDB"])
+        print(len(pdbs))
 
         for i, row in enumerate(reader):
             if not exclude_filters and row["PDB"] in pdbs:
@@ -122,7 +123,7 @@ def build_full_scatter(data_folder, data_file, pdb_filters_file, exclude_filters
         pdb=data["PDB"]
     ))
 
-    p = figure(x_range=[0, 0.1], tooltips="@pdb", title="Full data scatter")
+    p = figure(x_range=[0, 0.06], y_range=[0, 300], tooltips="@pdb", title="Full data scatter")
     p.xaxis.axis_label = "# Hydrogen Bonds / # Residues"
     p.yaxis.axis_label = "bfactor (Angstroms)"
     p.scatter('x', 'y', source=source)
