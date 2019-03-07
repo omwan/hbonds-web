@@ -64,13 +64,15 @@
         </li>
         <li>The filters can be cleared by clicking the "clear filter" button</li>
         <li>Click the "Build graphs" button on the right to generate graphs</li>
-        <li>The graphs may be customized by optionally entering a minimum bucket size, and/or by uploading a list of PDB
+        <li>The graphs may optionally be customized by entering a minimum bucket size, and/or by uploading a list of PDB
             IDs to filter in/out
         </li>
     </ol>
     </p>
     <p>
-        <a href="mailto:wan.o@husky.neu.edu">Contact</a>
+        Sample PDB ID filters:
+        <a href="/api/samples/cell_surface.csv">cell surface proteins</a>,
+        <a href="/api/samples/designed_proteins.csv">designed proteins</a>
     </p>
 
     <a class="close" href="javascript:void(0)">close</a>
@@ -125,7 +127,9 @@
                         <select ng-model="filters[$index].comparator"
                                 ng-change="cacheFilters()">
                             <option value="<">&lt;</option>
+                            <option value="<=">&lt;=</option>
                             <option value=">">&gt;</option>
+                            <option value=">=">&gt;=</option>
                             <option value="=">=</option>
                         </select>
 
