@@ -43,6 +43,12 @@ header {
     margin-bottom: 10px;
 }
 
+pre {
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
 main {
     padding-top: 20px;
     max-width: 1200px;
@@ -110,7 +116,7 @@ source: http://starious.tumblr.com/post/27923651360/tutorial-pop-up-menu
     top: 50%;
     left: 50%;
     z-index: 99999;
-    font-size:15px;
+    font-size: 15px;
 }
 
 img.btn_close {
@@ -127,7 +133,7 @@ img.btn_close {
 }
 
 .poplight {
-    text-decoration:none;
+    text-decoration: none;
 }
 
 #info_poplight {
