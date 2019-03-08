@@ -168,18 +168,28 @@ def download_scatter_plot_data(filename):
     return send_from_directory(folder, filename, as_attachment=True)
 
 
-@app.route("/api/filters", methods=["DELETE"])
-def delete_files():
+@app.route("/api/samples/<filename>")
+def download_sample_pdb_filters(filename):
     """
-    Delete all generated files in the upload folder.
+    Download a sample PDB ID filter.
 
+    :param filename: name of file to download
+    :return: PDB ID filter CSV
+    """
+    folder = os.path.join(app.config["MOE_FOLDER"], "samples")
+    return send_from_directory(folder, filename, as_attachment=True)
+
+
+@app.route("/api/filters/<filename>", methods=["DELETE"])
+def delete_files(filename):
+    """
+    Delete all generated files associated with the given scatter plot data file name.
+
+    :param filename: name of file to delete + its associated generated files
     :return: no content response
     """
     folder = app.config["UPLOAD_FOLDER"]
-    count = 0
-    for file in os.listdir(folder):
-        silent_remove(os.path.join(folder, file))
-        count += 1
-
-    print("%s files removed" % count)
+    file_patterns = ["filtered_%s", "means_filtered_%s", "means_%s", "%s"]
+    for pattern in file_patterns:
+        silent_remove(os.path.join(folder, pattern % filename))
     return '', 204
