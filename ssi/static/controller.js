@@ -6,8 +6,8 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.isLoading = false;
     $scope.labels = {
         "Type": "Bond Type",
-        "cb.cb": "cb.cb",
-        "sc_.exp_avg": "sc_.exp_avg",
+        "cb.cb": "C-Beta C-Beta Distance",
+        "sc_.exp_avg": "Side Chain Surface Exposure",
         "hb_energy": "Bond Energy",
         "residue": "Contains Residue",
         "expressionHost": "Expression Host",
