@@ -65,7 +65,14 @@ def get_hbond_type_counts():
     return query
 
 
-def get_data_from_filters(filter_string):
+def get_data_from_filters(filter_string, having_string=""):
+    """
+    Query moe table on the given filters to count hydrogen bonds for each PDB.
+
+    :param filter_string: where clause of query
+    :param having_string: having clause of query (if applicable)
+    :return: query results
+    """
     query_string = """
     SELECT
         "PDB",
@@ -81,13 +88,22 @@ def get_data_from_filters(filter_string):
         "PDB",
         "refinementResolution",
         "chainLength"
+    %s;
     """
     # TODO remove this
-    print(query_string % filter_string)
-    return db.engine.execute(query_string % filter_string)
+    print(query_string % (filter_string, having_string))
+    return db.engine.execute(query_string % (filter_string, having_string))
 
 
-def get_residue_data_from_filters(filter_string):
+def get_residue_data_from_filters(filter_string, having_string):
+    """
+    Query moe table on the given filters and also filtering on residue type
+    to count hydrogen bonds for each PDB.
+
+    :param filter_string: where clause of query
+    :param having_string: having clause of query (if applicable)
+    :return: query results
+    """
     query_string = """
     SELECT
         "PDB",
@@ -105,14 +121,20 @@ def get_residue_data_from_filters(filter_string):
     GROUP BY
         "PDB",
         "refinementResolution",
-        "chainLength";
+        "chainLength"
+    %s;
     """
     # TODO remove this
-    print(query_string % filter_string)
-    return db.engine.execute(query_string % filter_string)
+    print(query_string % (filter_string, having_string))
+    return db.engine.execute(query_string % (filter_string, having_string))
 
 
 def get_het_ids(limit=500):
+    """
+    Retrieve the distinct het ID values from the moe table.
+    :param limit: max number of het IDs to retrieve
+    :return: query results
+    """
     query_string = """
     SELECT
         DISTINCT "hetId",

@@ -118,13 +118,49 @@ def write_output(upload_folder, result):
     return filename, row_count
 
 
-def filter_moe(upload_folder, filters):
-    """
-    Build SQL where clause from filters + make SQL query to generate scatter plot data file.
+def filter_hbonds(filters):
+    havings = [f for f in filters if f["header"] == "hbonds/residues"]
+    filters = [f for f in filters if f["header"] != "hbonds/residues"]
+    return havings, filters
 
-    :param upload_folder: location to write output file to
-    :param filters: list of filter objects to generate query from
-    :return: name of scatter plot file
+
+def build_having_string(havings):
+    """
+    Build full string for having clause of query, applicable if filtering on
+    normalized hbond count (which is dynamically calculated in the query).
+    :param havings: list of filter objects
+    :return: formatted having clause string
+    """
+    or_clause = False
+    having_strings = ["HAVING"]
+    for f in havings:
+        header = 'count(DISTINCT "cb.cb") / CAST("chainLength" AS FLOAT)'
+        operator = f.get("comparator")
+        value = str(f["comparedValue"])
+        bool = f.get("bool", "")
+        strings = [header, operator, value, bool]
+
+        if not or_clause and bool == "or":
+            strings = ["("] + strings
+            or_clause = True
+        elif or_clause and bool == "and":
+            strings.insert(len(strings) - 1, ")")
+            or_clause = False
+
+        string = " ".join(strings)
+        having_strings.append(string)
+
+    if len(having_strings) > 1:
+        return strip_trailing_bool(" ".join(having_strings))
+    else:
+        return ""
+
+
+def build_where_string(filters):
+    """
+    Build full string for where clause of query, using filters that are PDB headers.
+    :param filters: list of filter objects
+    :return: formatted where clause string
     """
     filter_strings = []
     count_residues = False
@@ -139,12 +175,51 @@ def filter_moe(upload_folder, filters):
             string, or_clause = build_filter_string(f, or_clause)
             filter_strings.append(string)
 
-    final_string = strip_trailing_bool(" ".join(filter_strings))
+    return count_residues, strip_trailing_bool(" ".join(filter_strings))
+
+
+def build_query_string(where_string, havings):
+    """
+    Build string to display in front end for query info, with having clause
+    formatted in a readable way.
+
+    :param where_string: where clause
+    :param havings: list of filter objects for having clause
+    :return: formatted query string.
+    """
+    if len(havings) == 0:
+        return where_string
+    else:
+        having_strings = []
+        for f in havings:
+            header = "hbond/residues"
+            comparator = f.get("comparator")
+            value = str(f["comparedValue"])
+            bool = f["bool"]
+            having_strings.append(" ".join([header, comparator, value, bool]))
+        return strip_trailing_bool(where_string + " and " + " ".join(having_strings))
+
+
+def filter_moe(upload_folder, filters):
+    """
+    Build SQL where clause from filters + make SQL query to generate scatter plot data file,
+    returns name of file with query data, number of rows, and the query string used to
+    generate the data.
+
+    :param upload_folder: location to write output file to
+    :param filters: list of filter objects to generate query from
+    :return: name of scatter plot file
+    """
+    havings, filters = filter_hbonds(filters)
+
+    count_residues, where_string = build_where_string(filters)
+    having_string = build_having_string(havings)
 
     if not count_residues:
-        result = moe.get_data_from_filters(final_string)
+        result = moe.get_data_from_filters(where_string, having_string)
     else:
-        result = moe.get_residue_data_from_filters(final_string)
+        result = moe.get_residue_data_from_filters(where_string, having_string)
 
     filename, row_count = write_output(upload_folder, result)
-    return filename, row_count, final_string
+    query_string = build_query_string(where_string, havings)
+    return filename, row_count, query_string
