@@ -82,8 +82,7 @@ def get_data_from_filters(filter_string, having_string=""):
         "refinementResolution" as "resolution"
     FROM
         moe
-    WHERE
-        %s
+    %s
     GROUP BY
         "PDB",
         "refinementResolution",
@@ -116,8 +115,7 @@ def get_residue_data_from_filters(filter_string, having_string):
         "refinementResolution" AS "resolution"
     FROM
         moe
-    WHERE 
-        %s
+    %s
     GROUP BY
         "PDB",
         "refinementResolution",
