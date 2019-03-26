@@ -193,9 +193,8 @@ def build_query_string(where_string, havings):
     :param havings: list of filter objects for having clause
     :return: formatted query string.
     """
-    if len(havings) == 0:
-        return where_string
-    else:
+    having_string = ""
+    if len(havings) != 0:
         having_strings = []
         for f in havings:
             header = "hbonds/residues"
@@ -204,10 +203,16 @@ def build_query_string(where_string, havings):
             bool = f["bool"]
             having_strings.append(" ".join([header, comparator, value, bool]))
         having_string = strip_trailing_bool(" ".join(having_strings))
-        if where_string == "":
-            return having_string
-        else:
-            return where_string + " and " + having_string
+
+    if where_string != "":
+        where_string = where_string.replace("WHERE", "")
+
+    if len(havings) == 0:
+        return where_string
+    elif where_string == "":
+        return having_string
+    else:
+        return where_string + " and " + having_string
 
 
 def filter_moe(upload_folder, filters):
