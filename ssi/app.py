@@ -96,7 +96,7 @@ def chart():
             .build_full_scatter(folder, file, filters_filepath, exclude_filters)
         scatter_script, scatter_div = components(scatter_plot)
 
-        if file != "output.csv":
+        if file != "output.csv" or filters_filepath is not None:
             means_file = count_hbonds \
                 .build_means_output(folder, app.config["UPLOAD_FOLDER"], scatter_data)
         else:

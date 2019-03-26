@@ -6,8 +6,8 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.isLoading = false;
     $scope.labels = {
         "Type": "Bond Type",
-        "cb.cb": "cb.cb",
-        "sc_.exp_avg": "sc_.exp_avg",
+        "cb.cb": "C-Beta C-Beta Distance",
+        "sc_.exp_avg": "Side Chain Surface Exp.",
         "hb_energy": "Bond Energy",
         "residue": "Contains Residue",
         "expressionHost": "Expression Host",
@@ -17,11 +17,12 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
         "chainLength": "Chain Length",
         "ligandId": "Ligand ID",
         "hetId": "Het ID",
-        "residueCount": "Residue Count"
+        "residueCount": "Residue Count",
+        "hbonds/residues": "Normalized H-bond Count"
     };
 
     let numericals = ["averageBFactor", "residueCount", "chainLength",
-        "refinementResolution", "cb.cb", "sc_.exp_avg", "hb_energy"];
+        "refinementResolution", "cb.cb", "sc_.exp_avg", "hb_energy", "hbonds/residues"];
     let categorical_apis = ["source", "expressionHost", "hetId"];
     let categorical_statics = ["residue", "Type"];
 
@@ -106,7 +107,7 @@ app.controller('controller', ['$scope', '$http', function ($scope, $http) {
     $scope.submitDisabled = function () {
         let emptyFilters = $scope.filters.filter(function (f) {
             return f["numerical"] &&
-                (!("comparedValue" in f) || f["comparedValue"] === "");
+                (!("comparedValue" in f) || f["comparedValue"] === null);
         }).length > 0;
         return $scope.filters.length === 0 || emptyFilters;
     };
