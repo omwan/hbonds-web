@@ -87,6 +87,9 @@ def strip_trailing_bool(filter_string):
     :param filter_string: SQL where clause string
     :return: SQL where clause string with trailing boolean stripped, if necessary
     """
+    if filter_string == "":
+        return filter_string
+
     string, last_word = filter_string.rsplit(" ", 1)
     if last_word == "and" or last_word == "or":
         return string
@@ -162,7 +165,7 @@ def build_where_string(filters):
     :param filters: list of filter objects
     :return: formatted where clause string
     """
-    filter_strings = []
+    filter_strings = ["WHERE"]
     count_residues = False
 
     or_clause = False
@@ -175,7 +178,10 @@ def build_where_string(filters):
             string, or_clause = build_filter_string(f, or_clause)
             filter_strings.append(string)
 
-    return count_residues, strip_trailing_bool(" ".join(filter_strings))
+    if len(filter_strings) > 1:
+        return count_residues, strip_trailing_bool(" ".join(filter_strings))
+    else:
+        return False, ""
 
 
 def build_query_string(where_string, havings):
@@ -187,17 +193,26 @@ def build_query_string(where_string, havings):
     :param havings: list of filter objects for having clause
     :return: formatted query string.
     """
-    if len(havings) == 0:
-        return where_string
-    else:
+    having_string = ""
+    if len(havings) != 0:
         having_strings = []
         for f in havings:
-            header = "hbond/residues"
+            header = "hbonds/residues"
             comparator = f.get("comparator")
             value = str(f["comparedValue"])
             bool = f["bool"]
             having_strings.append(" ".join([header, comparator, value, bool]))
-        return strip_trailing_bool(where_string + " and " + " ".join(having_strings))
+        having_string = strip_trailing_bool(" ".join(having_strings))
+
+    if where_string != "":
+        where_string = where_string.replace("WHERE", "")
+
+    if len(havings) == 0:
+        return where_string
+    elif where_string == "":
+        return having_string
+    else:
+        return where_string + " and " + having_string
 
 
 def filter_moe(upload_folder, filters):
