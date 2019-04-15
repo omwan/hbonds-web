@@ -1,0 +1,15 @@
+[Unit]
+Description=SSI Web app
+
+[Service]
+Type=simple
+User=ssi
+Group=ssi
+Restart=on-failure
+Environment=LANG=en_US.UTF-8
+
+WorkingDirectory=/home/ssi/hbonds-web
+ExecStart=/home/ssi/hbonds-web/start.sh
+
+[Install]
+WantedBy=multi-user.target
