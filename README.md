@@ -133,7 +133,7 @@ alter user ssi with password '<password>'
 
 Make sure to save the password locally somewhere so you can reference it later. Exit the psql terminal with Ctrl+D. Exit the psql terminal with Ctrl+D.
 
-Create the database for the application by running `createdb ssi_dev`. 
+Create the database for the application by running `createdb ssi_prod`. 
 
 Get the database dump from your local environment by selecting all tables and then right click > Export, and select "SQL".
 
